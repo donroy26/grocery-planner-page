@@ -350,8 +350,20 @@ Ingredients:
     rows.forEach(function (row) {
       var id = row.getAttribute("data-meal-id");
       var acc = row.querySelector(".v-accept"), rej = row.querySelector(".v-reject");
-      if (acc) acc.addEventListener("click", function () { state[id] = state[id] || {}; state[id].verdict = "accept"; delete state[id].why; save(state); applyRow(row); status(); });
-      if (rej) rej.addEventListener("click", function () { state[id] = state[id] || {}; state[id].verdict = "reject"; if (!state[id].why) state[id].why = "not-today"; save(state); applyRow(row); status(); });
+      function clearVerdict() {
+        // back to "no opinion": drop the meal's state entirely (and any reject reason/note).
+        delete state[id]; var note = row.querySelector(".note"); if (note) note.value = "";
+      }
+      if (acc) acc.addEventListener("click", function () {
+        if (state[id] && state[id].verdict === "accept") { clearVerdict(); }
+        else { state[id] = state[id] || {}; state[id].verdict = "accept"; delete state[id].why; }
+        save(state); applyRow(row); status();
+      });
+      if (rej) rej.addEventListener("click", function () {
+        if (state[id] && state[id].verdict === "reject") { clearVerdict(); }
+        else { state[id] = state[id] || {}; state[id].verdict = "reject"; if (!state[id].why) state[id].why = "not-today"; }
+        save(state); applyRow(row); status();
+      });
       row.querySelectorAll('.reject-why input').forEach(function (radio) { radio.addEventListener("change", function () { state[id] = state[id] || {}; state[id].why = radio.value; save(state); }); });
       var note = row.querySelector(".note");
       if (note) note.addEventListener("input", function () { state[id] = state[id] || {}; state[id].note = note.value; save(state); });
