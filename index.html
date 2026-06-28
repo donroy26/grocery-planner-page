@@ -3,140 +3,388 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>This Week's Meals — 2026-06-22</title>
+  <title>Weekly Dinners — 2026-06-22</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 1rem; line-height: 1.6; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 0 1rem 2rem; line-height: 1.5; }
     .container { max-width: 720px; margin: 0 auto; }
-    h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
-    .subtitle { color: #555; font-size: 0.95rem; margin-bottom: 1.5rem; }
-    .summary-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .summary-chip { background: #fff; border: 1px solid #ddd; border-radius: 20px; padding: 0.4rem 0.85rem; font-size: 0.9rem; }
+    h1 { font-size: 1.4rem; margin: 1rem 0 0.15rem; }
+    .subtitle { color: #555; font-size: 0.9rem; margin-bottom: 0.75rem; }
+    .high-cost-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-weight: 600; color: #856404; }
+    .summary-row { display: flex; gap: 0.6rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .summary-chip { background: #fff; border: 1px solid #ddd; border-radius: 20px; padding: 0.35rem 0.8rem; font-size: 0.85rem; }
     .summary-chip strong { color: #333; }
-    .section-title { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #ddd; padding-bottom: 0.35rem; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 0.25rem; position: sticky; top: 0; background: #f5f5f0; padding: 0.5rem 0; z-index: 10; border-bottom: 1px solid #ddd; }
+    .tab-btn { flex: 1; border: 1px solid #ccc; background: #fff; border-radius: 8px; padding: 0.6rem 0.5rem; font-size: 0.95rem; font-weight: 600; color: #555; cursor: pointer; }
+    .tab-btn.active { background: #0a4c7a; color: #fff; border-color: #0a4c7a; }
+    .tab-panel { display: none; padding-top: 1rem; }
+    .tab-panel.active { display: block; }
+    .locked-msg { background: #fff; border: 1px dashed #ccc; border-radius: 8px; padding: 1.25rem; text-align: center; color: #888; font-size: 0.95rem; }
+
+    /* Meal cards */
     .day-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; }
-    .day-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: #222; }
-    .meal-block { margin-bottom: 0.85rem; padding-bottom: 0.85rem; border-bottom: 1px solid #f0f0f0; }
-    .meal-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    .meal-header { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
-    .meal-type { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #777; min-width: 70px; }
-    .meal-name { font-size: 1rem; font-weight: 600; }
-    .meal-desc { font-size: 0.88rem; color: #555; margin: 0 0 0.4rem 0; line-height: 1.4; font-style: italic; }
-    .toddler-tag { font-size: 0.78rem; color: #e67e22; }
-    .ingredients-list { list-style: disc; padding-left: 1.5rem; font-size: 0.9rem; color: #444; }
-    .ingredients-list li { margin-bottom: 0.1rem; }
-    .steps-list { list-style: decimal; padding-left: 1.5rem; font-size: 0.9rem; color: #444; margin-top: 0.4rem; }
-    .steps-list li { margin-bottom: 0.1rem; }
-    .grocery-section { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.25rem; margin-top: 0.75rem; }
-    .grocery-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; }
-    .grocery-category h3 { font-size: 0.9rem; text-transform: uppercase; color: #555; font-weight: 700; margin: 0.75rem 0 0.35rem; letter-spacing: 0.04em; }
-    .grocery-category ul { list-style: disc; padding-left: 1.5rem; font-size: 0.92rem; }
-    .grocery-category li { margin-bottom: 0.15rem; }
+    .day-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: #777; text-transform: uppercase; letter-spacing: 0.03em; }
+    .meal-row { background: #fff; }
+    .meal-line { display: flex; gap: 0.5rem; align-items: baseline; flex-wrap: wrap; }
+    .expand-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; color: #888; padding: 0 0.25rem 0 0; line-height: 1; align-self: center; transition: transform .15s; }
+    .expand-btn[aria-expanded="true"] { transform: rotate(90deg); color: #333; }
+    .meal-name { flex: 1; font-size: 1rem; font-weight: 600; }
+    .meal-desc { flex-basis: 100%; font-size: 0.85rem; color: #555; margin: 0.1rem 0 0.15rem 1.9rem; line-height: 1.35; font-style: italic; }
+    .cost { font-size: 0.85rem; color: #228B22; font-weight: 600; white-space: nowrap; }
+    .deal-tag { font-size: 0.78rem; background: #d4edda; color: #155724; border-radius: 3px; padding: 0.1em 0.4em; }
+    .toddler-tag { font-size: 0.78rem; }
+    .meal-detail { margin: 0.5rem 0 0.25rem 1.9rem; padding: 0.5rem 0.75rem; background: #fafafa; border: 1px solid #eee; border-radius: 6px; }
+    .detail-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: #999; font-weight: 700; margin: 0.35rem 0 0.15rem; }
+    .ingredients-list { list-style: disc; padding-left: 1.4rem; font-size: 0.88rem; color: #444; }
+    .steps-list { list-style: decimal; padding-left: 1.4rem; font-size: 0.88rem; color: #444; }
+    .no-detail { font-size: 0.85rem; color: #999; font-style: italic; }
+
+    /* Plan tab: verdict controls */
+    .verdict-bar { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; margin: 0.5rem 0 0.25rem 1.9rem; }
+    .verdict-bar button { border: 1px solid #ccc; background: #fff; border-radius: 6px; padding: 0.3rem 0.7rem; font-size: 0.85rem; cursor: pointer; }
+    .verdict-bar .v-accept.on { background: #d4edda; border-color: #4caf50; color: #1b5e20; font-weight: 600; }
+    .verdict-bar .v-reject.on { background: #fdecea; border-color: #e57373; color: #b71c1c; font-weight: 600; }
+    .reject-why { font-size: 0.82rem; color: #555; display: inline-flex; gap: 0.6rem; }
+    .reject-why label { cursor: pointer; }
+    .note { flex: 1; min-width: 120px; border: 1px solid #ddd; border-radius: 6px; padding: 0.3rem 0.5rem; font-size: 0.85rem; }
+    .meal-row.accepted .meal-line { background: #f5fbf6; }
+    .meal-row.rejected .meal-line { background: #fdf6f5; }
+
+    /* Cook with Claude */
+    .cook-btn { margin: 0.5rem 0 0.25rem 1.9rem; background: #6b3fa0; color: #fff; border: none; border-radius: 6px; padding: 0.4rem 0.85rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .cook-btn:active { background: #552f86; }
+    .cook-hint { font-size: 0.78rem; color: #888; margin: 0.2rem 0 0 1.9rem; }
+    .cook-output { width: calc(100% - 1.9rem); margin: 0.4rem 0 0 1.9rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.78rem; border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem; min-height: 3rem; display: none; }
+
+    /* Shop tab */
+    .grocery-category h3 { font-size: 0.9rem; text-transform: uppercase; color: #555; font-weight: 700; margin: 0.85rem 0 0.35rem; letter-spacing: 0.04em; }
+    .grocery-category ul { list-style: none; padding-left: 0; font-size: 0.95rem; }
+    .grocery-category li { padding: 0.35rem 0.25rem; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 0.5rem; }
+    .grocery-category li input { width: 1.1rem; height: 1.1rem; }
+    .grocery-category li.checked label { text-decoration: line-through; color: #aaa; }
     .instacart-link { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0.6rem 1rem; margin-bottom: 0.75rem; }
     .instacart-link a { color: #2e7d32; font-weight: 600; text-decoration: none; }
-    .instacart-link a:hover { text-decoration: underline; }
-    .notes-box { background: #fffbf0; border: 1px solid #ffe082; border-radius: 6px; padding: 0.6rem 1rem; margin-top: 1rem; font-size: 0.9rem; color: #555; }
-    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: 0.82rem; color: #777; }
+
+    .deals-section, .notes-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.75rem 1rem; margin-top: 1rem; font-size: 0.9rem; }
+    .notes-box { background: #fffbf0; border-color: #ffe082; color: #555; }
+    .deals-section h2 { font-size: 0.95rem; margin-bottom: 0.4rem; }
+    .deals-section ul { padding-left: 1.25rem; }
+
+    /* feedback action bar (Plan tab, pre-approval) */
+    .feedback-bar { position: sticky; bottom: 0; background: #fff; border-top: 2px solid #ddd; padding: 0.75rem 0; margin-top: 1rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .copy-btn { background: #0a4c7a; color: #fff; border: none; border-radius: 6px; padding: 0.55rem 1.1rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .feedback-status { font-size: 0.85rem; color: #555; }
+    .feedback-output { width: 100%; margin-top: 0.5rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem; min-height: 4rem; display: none; }
+    footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: 0.8rem; color: #777; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>This Week's Meals</h1>
-  <p class="subtitle">Week of 2026-06-22 &nbsp;·&nbsp; Approved</p>
+  <h1>Weekly Dinners</h1>
+  <p class="subtitle">Week of 2026-06-22 &nbsp;·&nbsp; <span id="stateLabel">Approved</span></p>
+
+  
 
   <div class="summary-row">
-    <div class="summary-chip"><strong>Weekly cost est.:</strong> $61.00</div>
+    <div class="summary-chip"><strong>Est. cost:</strong> $61.00</div>
     <div class="summary-chip"><strong>Store:</strong> Aldi</div>
-    <div class="summary-chip"><strong>Grocery mode:</strong> list</div>
   </div>
 
-  <div class="section-title">Meal Plan</div>
-  <div class="day-card"><h3>Dinner 1</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Simple Spaghetti with Meat Sauce<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Classic spaghetti in hearty beef marinara, topped with parmesan — a guaranteed toddler win.</div>
-<ul class="ingredients-list"><li>1 lb spaghetti</li><li>24 oz marinara sauce</li><li>1 lb ground beef</li><li>0.25 cup parmesan cheese</li></ul>
-</div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="plan">Plan</button>
+    <button class="tab-btn" data-tab="shop">Shop</button>
+    <button class="tab-btn" data-tab="cook">Cook</button>
+  </div>
+
+  <!-- PLAN -->
+  <section class="tab-panel active" id="tab-plan">
+    <div class="day-card"><h3>Dinner 1</h3>
+<div class="meal-row" data-meal-id="Dinner-1-dinner" data-meal-name="Simple Spaghetti with Meat Sauce"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Simple Spaghetti with Meat Sauce<span class="toddler-tag"> 🧒</span></span><span class="cost">$9.50</span><span class="deal-tag">Fresh Ground Beef Chub</span><div class="meal-desc">Classic spaghetti in hearty beef marinara, topped with parmesan — a guaranteed toddler win.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 lb spaghetti</li><li>24 oz marinara sauce</li><li>1 lb ground beef</li><li>0.25 cup parmesan cheese</li></ul></div></div>
 </div>
 <div class="day-card"><h3>Dinner 2</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Sheet Pan Chicken Thighs with Potatoes & Broccoli<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Crispy seasoned thighs roasted with baby potatoes and broccoli on one easy pan.</div>
-<ul class="ingredients-list"><li>2 lb bone-in chicken thighs</li><li>1.5 lb baby potatoes</li><li>3 cups broccoli florets</li><li>3 tbsp olive oil</li><li>1 tsp garlic powder</li><li>1 tsp paprika</li></ul>
-</div>
+<div class="meal-row" data-meal-id="Dinner-2-dinner" data-meal-name="Sheet Pan Chicken Thighs with Potatoes &amp; Broccoli"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Sheet Pan Chicken Thighs with Potatoes &amp; Broccoli<span class="toddler-tag"> 🧒</span></span><span class="cost">$10.50</span><span class="deal-tag">Kirkwood Fresh Family Pack Chicken Thighs</span><div class="meal-desc">Crispy seasoned thighs roasted with baby potatoes and broccoli on one easy pan.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 lb bone-in chicken thighs</li><li>1.5 lb baby potatoes</li><li>3 cups broccoli florets</li><li>3 tbsp olive oil</li><li>1 tsp garlic powder</li><li>1 tsp paprika</li></ul></div></div>
 </div>
 <div class="day-card"><h3>Dinner 3</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Black Bean Tacos with Guacamole<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Warm seasoned black bean tacos with cheddar, salsa, and fresh guac — heat added per plate.</div>
-<ul class="ingredients-list"><li>2 15-oz cans black beans</li><li>8 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>0.5 cup sour cream</li><li>1 container guacamole</li><li>1 tsp cumin</li><li>0.5 tsp chili powder</li></ul>
-</div>
+<div class="meal-row" data-meal-id="Dinner-3-dinner" data-meal-name="Black Bean Tacos with Guacamole"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Black Bean Tacos with Guacamole<span class="toddler-tag"> 🧒</span></span><span class="cost">$10.00</span><span class="deal-tag">Park Street Deli Assorted Fresh Guacamole</span><div class="meal-desc">Warm seasoned black bean tacos with cheddar, salsa, and fresh guac — heat added per plate.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 15-oz cans black beans</li><li>8 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>0.5 cup sour cream</li><li>1 container guacamole</li><li>1 tsp cumin</li><li>0.5 tsp chili powder</li></ul></div></div>
 </div>
 <div class="day-card"><h3>Dinner 4</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Grilled Lemon-Garlic Salmon with Rice & Green Beans<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Flaky lemon-garlic salmon off the grill with fluffy rice and tender green beans.</div>
-<ul class="ingredients-list"><li>1.5 lb fresh Atlantic salmon</li><li>1.5 cups dry white rice</li><li>12 oz green beans</li><li>1 piece lemon</li><li>3 cloves garlic</li><li>2 tbsp olive oil</li></ul>
-</div>
+<div class="meal-row" data-meal-id="Dinner-4-dinner" data-meal-name="Grilled Lemon-Garlic Salmon with Rice &amp; Green Beans"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Grilled Lemon-Garlic Salmon with Rice &amp; Green Beans<span class="toddler-tag"> 🧒</span></span><span class="cost">$16.00</span><span class="deal-tag">Fresh Atlantic Salmon</span><div class="meal-desc">Flaky lemon-garlic salmon off the grill with fluffy rice and tender green beans.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1.5 lb fresh Atlantic salmon</li><li>1.5 cups dry white rice</li><li>12 oz green beans</li><li>1 piece lemon</li><li>3 cloves garlic</li><li>2 tbsp olive oil</li></ul></div></div>
 </div>
 <div class="day-card"><h3>Dinner 5</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Grilled Turkey Burgers with Corn on the Cob<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Juicy seasoned turkey burgers on brioche buns with sweet grilled corn alongside.</div>
-<ul class="ingredients-list"><li>4 patties seasoned turkey burgers</li><li>6 pieces brioche buns</li><li>4 slices American cheese slices</li><li>1 pint snacking tomatoes</li><li>1 head lettuce</li><li>4 ears corn on the cob</li></ul>
+<div class="meal-row" data-meal-id="Dinner-5-dinner" data-meal-name="Grilled Turkey Burgers with Corn on the Cob"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Grilled Turkey Burgers with Corn on the Cob<span class="toddler-tag"> 🧒</span></span><span class="cost">$15.00</span><span class="deal-tag">Kirkwood Seasoned Turkey Burgers</span><span class="deal-tag">Specially Selected 6-Count Brioche Buns</span><div class="meal-desc">Juicy seasoned turkey burgers on brioche buns with sweet grilled corn alongside.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>4 patties seasoned turkey burgers</li><li>6 pieces brioche buns</li><li>4 slices American cheese slices</li><li>1 pint snacking tomatoes</li><li>1 head lettuce</li><li>4 ears corn on the cob</li></ul></div></div>
 </div>
-</div>
+    <div class="notes-box"><strong>Notes:</strong> Single-store shop at Aldi — everything is ~5 min away and Aldi carries this week&#x27;s best proteins (ground beef chub $2.99, family-pack chicken thighs $1.55/lb, turkey burgers, fresh salmon), so a Costco run isn&#x27;t worth it for a ~$61 week. Five fast, easy dinners (3 are your saved staples, 2 grill nights for the season) sized to ~4 servings each so leftovers cover next-day lunches. None repeat last week&#x27;s list. Pork avoided per wife&#x27;s preference. Spice stays mild in the pot — salsa, hot sauce, and chili flakes are added per plate so the toddler always gets a mild portion. Adjust here before approving if you&#x27;d rather swap the salmon night.</div>
+    <div class="deals-section"><h2>Deals used this week</h2><ul style="padding-left:1.25rem;font-size:.9rem"><li><strong>Fresh Ground Beef Chub</strong> — $2.99 at ALDI</li><li><strong>Kirkwood Fresh Family Pack Chicken Thighs</strong> — $1.55 at ALDI</li><li><strong>Park Street Deli Assorted Fresh Guacamole</strong> — $2.99 at ALDI</li><li><strong>Fresh Atlantic Salmon</strong> — $8.99 at ALDI</li><li><strong>Kirkwood Seasoned Turkey Burgers</strong> — $6.99 at ALDI</li><li><strong>Specially Selected 6-Count Brioche Buns</strong> — $3.99 at ALDI</li></ul></div>
+    
+  </section>
 
-  <div class="section-title">Grocery List</div>
-  <div class="grocery-section">
+  <!-- SHOP -->
+  <section class="tab-panel" id="tab-shop">
     <div class="grocery-category"><h3>Produce</h3><ul>
-<li>1.5 lb baby potatoes</li>
-<li>1 bunch bananas</li>
-<li>1 container black pepper</li>
-<li>3 cups broccoli florets</li>
-<li>3 cloves garlic</li>
-<li>1 tsp garlic powder</li>
-<li>1 container garlic powder</li>
-<li>1 piece lemon</li>
-<li>1 head lettuce</li>
-<li>1 pint snacking tomatoes</li>
+<li><label><input type="checkbox"> 1.5 lb baby potatoes</label></li>
+<li><label><input type="checkbox"> 1 bunch bananas</label></li>
+<li><label><input type="checkbox"> 1 container black pepper</label></li>
+<li><label><input type="checkbox"> 3 cups broccoli florets</label></li>
+<li><label><input type="checkbox"> 3 cloves garlic</label></li>
+<li><label><input type="checkbox"> 1 tsp garlic powder</label></li>
+<li><label><input type="checkbox"> 1 container garlic powder</label></li>
+<li><label><input type="checkbox"> 1 piece lemon</label></li>
+<li><label><input type="checkbox"> 1 head lettuce</label></li>
+<li><label><input type="checkbox"> 1 pint snacking tomatoes</label></li>
 </ul></div>
 <div class="grocery-category"><h3>Meat</h3><ul>
-<li>2 lb bone-in chicken thighs</li>
-<li>1.5 lb fresh Atlantic salmon</li>
-<li>1 lb ground beef</li>
-<li>4 patties seasoned turkey burgers</li>
+<li><label><input type="checkbox"> 2 lb bone-in chicken thighs</label></li>
+<li><label><input type="checkbox"> 1.5 lb fresh Atlantic salmon</label></li>
+<li><label><input type="checkbox"> 1 lb ground beef</label></li>
+<li><label><input type="checkbox"> 4 patties seasoned turkey burgers</label></li>
 </ul></div>
 <div class="grocery-category"><h3>Dairy</h3><ul>
-<li>4 slices American cheese slices</li>
-<li>1 lb butter</li>
-<li>1 dozen eggs</li>
-<li>1 gallon milk</li>
-<li>0.25 cup parmesan cheese</li>
-<li>1 cup shredded cheddar</li>
-<li>0.5 cup sour cream</li>
+<li><label><input type="checkbox"> 4 slices American cheese slices</label></li>
+<li><label><input type="checkbox"> 1 lb butter</label></li>
+<li><label><input type="checkbox"> 1 dozen eggs</label></li>
+<li><label><input type="checkbox"> 1 gallon milk</label></li>
+<li><label><input type="checkbox"> 0.25 cup parmesan cheese</label></li>
+<li><label><input type="checkbox"> 1 cup shredded cheddar</label></li>
+<li><label><input type="checkbox"> 0.5 cup sour cream</label></li>
 </ul></div>
 <div class="grocery-category"><h3>Bakery</h3><ul>
-<li>1 loaf bread</li>
-<li>6 pieces brioche buns</li>
-<li>8 pieces flour tortillas</li>
+<li><label><input type="checkbox"> 1 loaf bread</label></li>
+<li><label><input type="checkbox"> 6 pieces brioche buns</label></li>
+<li><label><input type="checkbox"> 8 pieces flour tortillas</label></li>
 </ul></div>
 <div class="grocery-category"><h3>Pantry</h3><ul>
-<li>2 15-oz cans black beans</li>
-<li>0.5 tsp chili powder</li>
-<li>1 tsp cumin</li>
-<li>12 oz green beans</li>
-<li>24 oz marinara sauce</li>
-<li>5 tbsp olive oil</li>
-<li>1 bottle olive oil</li>
-<li>1 tsp paprika</li>
-<li>1 cup salsa</li>
-<li>1 container salt</li>
-<li>1.5 cups dry white rice</li>
+<li><label><input type="checkbox"> 2 15-oz cans black beans</label></li>
+<li><label><input type="checkbox"> 0.5 tsp chili powder</label></li>
+<li><label><input type="checkbox"> 1 tsp cumin</label></li>
+<li><label><input type="checkbox"> 12 oz green beans</label></li>
+<li><label><input type="checkbox"> 24 oz marinara sauce</label></li>
+<li><label><input type="checkbox"> 5 tbsp olive oil</label></li>
+<li><label><input type="checkbox"> 1 bottle olive oil</label></li>
+<li><label><input type="checkbox"> 1 tsp paprika</label></li>
+<li><label><input type="checkbox"> 1 cup salsa</label></li>
+<li><label><input type="checkbox"> 1 container salt</label></li>
+<li><label><input type="checkbox"> 1.5 cups dry white rice</label></li>
 </ul></div>
 <div class="grocery-category"><h3>Beverages</h3><ul>
-<li>1 bag coffee</li>
+<li><label><input type="checkbox"> 1 bag coffee</label></li>
 </ul></div>
 <div class="grocery-category"><h3>Other</h3><ul>
-<li>4 ears corn on the cob</li>
-<li>1 container guacamole</li>
-<li>1 lb spaghetti</li>
+<li><label><input type="checkbox"> 4 ears corn on the cob</label></li>
+<li><label><input type="checkbox"> 1 container guacamole</label></li>
+<li><label><input type="checkbox"> 1 lb spaghetti</label></li>
 </ul></div>
-  </div>
+  </section>
 
-  <div class="notes-box"><strong>Notes:</strong> Single-store shop at Aldi — everything is ~5 min away and Aldi carries this week's best proteins (ground beef chub $2.99, family-pack chicken thighs $1.55/lb, turkey burgers, fresh salmon), so a Costco run isn't worth it for a ~$61 week. Five fast, easy dinners (3 are your saved staples, 2 grill nights for the season) sized to ~4 servings each so leftovers cover next-day lunches. None repeat last week's list. Pork avoided per wife's preference. Spice stays mild in the pot — salsa, hot sauce, and chili flakes are added per plate so the toddler always gets a mild portion. Adjust here before approving if you'd rather swap the salmon night.</div>
+  <!-- COOK -->
+  <section class="tab-panel" id="tab-cook">
+    <div class="day-card"><h3>Dinner 1</h3>
+<div class="meal-row"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Simple Spaghetti with Meat Sauce<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Classic spaghetti in hearty beef marinara, topped with parmesan — a guaranteed toddler win.</div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 lb spaghetti</li><li>24 oz marinara sauce</li><li>1 lb ground beef</li><li>0.25 cup parmesan cheese</li></ul></div><button class="cook-btn" type="button" data-prompt="I&#x27;m cooking &quot;Simple Spaghetti with Meat Sauce&quot; tonight and want your help as I go.
 
-  <footer>Generated by weekly-grocery-planner · Approved · Week of 2026-06-22</footer>
+Household context: 2 adults + 1 toddler. Keep it toddler-friendly — season mild in the
+pot and we add heat per plate. We like fast, easy weeknight cooking. No pork.
+
+Help me with: scaling the servings up or down, ingredient substitutions if I&#x27;m missing
+something, and what I can prep ahead. Walk me through the steps when I&#x27;m ready.
+
+Ingredients:
+- 1 lb spaghetti
+- 24 oz marinara sauce
+- 1 lb ground beef
+- 0.25 cup parmesan cheese">🧑‍🍳 Cook with Claude</button><div class="cook-hint">Copies a recipe prompt (with scaling/substitution help) to paste into the Claude app.</div><textarea class="cook-output" readonly></textarea></div>
 </div>
+<div class="day-card"><h3>Dinner 2</h3>
+<div class="meal-row"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Sheet Pan Chicken Thighs with Potatoes &amp; Broccoli<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Crispy seasoned thighs roasted with baby potatoes and broccoli on one easy pan.</div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 lb bone-in chicken thighs</li><li>1.5 lb baby potatoes</li><li>3 cups broccoli florets</li><li>3 tbsp olive oil</li><li>1 tsp garlic powder</li><li>1 tsp paprika</li></ul></div><button class="cook-btn" type="button" data-prompt="I&#x27;m cooking &quot;Sheet Pan Chicken Thighs with Potatoes &amp; Broccoli&quot; tonight and want your help as I go.
+
+Household context: 2 adults + 1 toddler. Keep it toddler-friendly — season mild in the
+pot and we add heat per plate. We like fast, easy weeknight cooking. No pork.
+
+Help me with: scaling the servings up or down, ingredient substitutions if I&#x27;m missing
+something, and what I can prep ahead. Walk me through the steps when I&#x27;m ready.
+
+Ingredients:
+- 2 lb bone-in chicken thighs
+- 1.5 lb baby potatoes
+- 3 cups broccoli florets
+- 3 tbsp olive oil
+- 1 tsp garlic powder
+- 1 tsp paprika">🧑‍🍳 Cook with Claude</button><div class="cook-hint">Copies a recipe prompt (with scaling/substitution help) to paste into the Claude app.</div><textarea class="cook-output" readonly></textarea></div>
+</div>
+<div class="day-card"><h3>Dinner 3</h3>
+<div class="meal-row"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Black Bean Tacos with Guacamole<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Warm seasoned black bean tacos with cheddar, salsa, and fresh guac — heat added per plate.</div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 15-oz cans black beans</li><li>8 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>0.5 cup sour cream</li><li>1 container guacamole</li><li>1 tsp cumin</li><li>0.5 tsp chili powder</li></ul></div><button class="cook-btn" type="button" data-prompt="I&#x27;m cooking &quot;Black Bean Tacos with Guacamole&quot; tonight and want your help as I go.
+
+Household context: 2 adults + 1 toddler. Keep it toddler-friendly — season mild in the
+pot and we add heat per plate. We like fast, easy weeknight cooking. No pork.
+
+Help me with: scaling the servings up or down, ingredient substitutions if I&#x27;m missing
+something, and what I can prep ahead. Walk me through the steps when I&#x27;m ready.
+
+Ingredients:
+- 2 15-oz cans black beans
+- 8 pieces flour tortillas
+- 1 cup shredded cheddar
+- 1 cup salsa
+- 0.5 cup sour cream
+- 1 container guacamole
+- 1 tsp cumin
+- 0.5 tsp chili powder">🧑‍🍳 Cook with Claude</button><div class="cook-hint">Copies a recipe prompt (with scaling/substitution help) to paste into the Claude app.</div><textarea class="cook-output" readonly></textarea></div>
+</div>
+<div class="day-card"><h3>Dinner 4</h3>
+<div class="meal-row"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Grilled Lemon-Garlic Salmon with Rice &amp; Green Beans<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Flaky lemon-garlic salmon off the grill with fluffy rice and tender green beans.</div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1.5 lb fresh Atlantic salmon</li><li>1.5 cups dry white rice</li><li>12 oz green beans</li><li>1 piece lemon</li><li>3 cloves garlic</li><li>2 tbsp olive oil</li></ul></div><button class="cook-btn" type="button" data-prompt="I&#x27;m cooking &quot;Grilled Lemon-Garlic Salmon with Rice &amp; Green Beans&quot; tonight and want your help as I go.
+
+Household context: 2 adults + 1 toddler. Keep it toddler-friendly — season mild in the
+pot and we add heat per plate. We like fast, easy weeknight cooking. No pork.
+
+Help me with: scaling the servings up or down, ingredient substitutions if I&#x27;m missing
+something, and what I can prep ahead. Walk me through the steps when I&#x27;m ready.
+
+Ingredients:
+- 1.5 lb fresh Atlantic salmon
+- 1.5 cups dry white rice
+- 12 oz green beans
+- 1 piece lemon
+- 3 cloves garlic
+- 2 tbsp olive oil">🧑‍🍳 Cook with Claude</button><div class="cook-hint">Copies a recipe prompt (with scaling/substitution help) to paste into the Claude app.</div><textarea class="cook-output" readonly></textarea></div>
+</div>
+<div class="day-card"><h3>Dinner 5</h3>
+<div class="meal-row"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Grilled Turkey Burgers with Corn on the Cob<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Juicy seasoned turkey burgers on brioche buns with sweet grilled corn alongside.</div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>4 patties seasoned turkey burgers</li><li>6 pieces brioche buns</li><li>4 slices American cheese slices</li><li>1 pint snacking tomatoes</li><li>1 head lettuce</li><li>4 ears corn on the cob</li></ul></div><button class="cook-btn" type="button" data-prompt="I&#x27;m cooking &quot;Grilled Turkey Burgers with Corn on the Cob&quot; tonight and want your help as I go.
+
+Household context: 2 adults + 1 toddler. Keep it toddler-friendly — season mild in the
+pot and we add heat per plate. We like fast, easy weeknight cooking. No pork.
+
+Help me with: scaling the servings up or down, ingredient substitutions if I&#x27;m missing
+something, and what I can prep ahead. Walk me through the steps when I&#x27;m ready.
+
+Ingredients:
+- 4 patties seasoned turkey burgers
+- 6 pieces brioche buns
+- 4 slices American cheese slices
+- 1 pint snacking tomatoes
+- 1 head lettuce
+- 4 ears corn on the cob">🧑‍🍳 Cook with Claude</button><div class="cook-hint">Copies a recipe prompt (with scaling/substitution help) to paste into the Claude app.</div><textarea class="cook-output" readonly></textarea></div>
+</div>
+  </section>
+
+  <footer>weekly-grocery-planner · Approved · Week of 2026-06-22</footer>
+</div>
+
+<script>
+(function () {
+  // ---- Tabs ----
+  var btns = document.querySelectorAll(".tab-btn");
+  var panels = document.querySelectorAll(".tab-panel");
+  btns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      btns.forEach(function (x) { x.classList.remove("active"); });
+      panels.forEach(function (p) { p.classList.remove("active"); });
+      b.classList.add("active");
+      document.getElementById("tab-" + b.getAttribute("data-tab")).classList.add("active");
+    });
+  });
+
+  // ---- Expand recipe detail (Plan + Cook) ----
+  document.querySelectorAll(".expand-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var detail = btn.closest(".meal-row, .meal-block").querySelector(".meal-detail");
+      if (!detail) return;
+      var open = detail.hidden; detail.hidden = !open;
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
+
+  // ---- Shop: check off items (persist per week) ----
+  var SHOP_KEY = "wgp-shop-2026-06-22";
+  var shopState = {}; try { shopState = JSON.parse(localStorage.getItem(SHOP_KEY) || "{}"); } catch (e) {}
+  document.querySelectorAll(".grocery-category li").forEach(function (li, i) {
+    var cb = li.querySelector("input[type=checkbox]"); if (!cb) return;
+    var id = "i" + i;
+    if (shopState[id]) { cb.checked = true; li.classList.add("checked"); }
+    cb.addEventListener("change", function () {
+      li.classList.toggle("checked", cb.checked);
+      shopState[id] = cb.checked; localStorage.setItem(SHOP_KEY, JSON.stringify(shopState));
+    });
+  });
+
+  // ---- Cook with Claude: copy a primed prompt ----
+  document.querySelectorAll(".cook-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var prompt = btn.getAttribute("data-prompt") || "";
+      var out = btn.parentElement.querySelector(".cook-output");
+      if (out) { out.value = prompt; out.style.display = "block"; }
+      function fb() { if (out) { out.focus(); out.select(); try { document.execCommand("copy"); } catch (e) {} } }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(prompt).then(function () {
+          btn.textContent = "✓ Copied — paste into Claude";
+          setTimeout(function () { btn.textContent = "🧑‍🍳 Cook with Claude"; }, 2500);
+        }, fb);
+      } else { fb(); }
+    });
+  });
+
+  // ---- Plan feedback (pre-approval only; element may be absent) ----
+  var feedbackBar = document.getElementById("copyFeedback");
+  if (feedbackBar) {
+    var WEEK = "2026-06-22";
+    var KEY = "wgp-feedback-" + WEEK;
+    function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
+    function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+    var state = load();
+    var rows = Array.prototype.slice.call(document.querySelectorAll(".meal-row[data-meal-id]"));
+
+    function applyRow(row) {
+      var id = row.getAttribute("data-meal-id"); var v = state[id] || {};
+      var acc = row.querySelector(".v-accept"), rej = row.querySelector(".v-reject");
+      var why = row.querySelector(".reject-why"), note = row.querySelector(".note");
+      if (acc) acc.classList.toggle("on", v.verdict === "accept");
+      if (rej) rej.classList.toggle("on", v.verdict === "reject");
+      row.classList.toggle("accepted", v.verdict === "accept");
+      row.classList.toggle("rejected", v.verdict === "reject");
+      if (why) why.hidden = v.verdict !== "reject";
+      if (v.why) { var r = row.querySelector('input[value="' + v.why + '"]'); if (r) r.checked = true; }
+      if (note && typeof v.note === "string") note.value = v.note;
+    }
+    function status() {
+      var a = 0, r = 0;
+      Object.keys(state).forEach(function (k) { if (state[k].verdict === "accept") a++; else if (state[k].verdict === "reject") r++; });
+      document.getElementById("feedbackStatus").textContent = (a + r) + " of " + rows.length + " marked  ·  " + a + " accept, " + r + " reject";
+    }
+    rows.forEach(function (row) {
+      var id = row.getAttribute("data-meal-id");
+      var acc = row.querySelector(".v-accept"), rej = row.querySelector(".v-reject");
+      if (acc) acc.addEventListener("click", function () { state[id] = state[id] || {}; state[id].verdict = "accept"; delete state[id].why; save(state); applyRow(row); status(); });
+      if (rej) rej.addEventListener("click", function () { state[id] = state[id] || {}; state[id].verdict = "reject"; if (!state[id].why) state[id].why = "not-today"; save(state); applyRow(row); status(); });
+      row.querySelectorAll('.reject-why input').forEach(function (radio) { radio.addEventListener("change", function () { state[id] = state[id] || {}; state[id].why = radio.value; save(state); }); });
+      var note = row.querySelector(".note");
+      if (note) note.addEventListener("input", function () { state[id] = state[id] || {}; state[id].note = note.value; save(state); });
+      applyRow(row);
+    });
+    status();
+
+    function buildText() {
+      var lines = ["GROCERY FEEDBACK week=" + WEEK];
+      rows.forEach(function (row) {
+        var id = row.getAttribute("data-meal-id"); var name = row.getAttribute("data-meal-name") || ""; var v = state[id];
+        if (!v || !v.verdict) return;
+        var line = "- " + id + " | " + v.verdict;
+        if (v.verdict === "reject") line += " (" + (v.why || "not-today") + ")";
+        line += " | " + name;
+        if (v.note && v.note.trim()) line += " | note: " + v.note.trim();
+        lines.push(line);
+      });
+      if (lines.length === 1) lines.push("(no meals marked)");
+      return lines.join("\n");
+    }
+    feedbackBar.addEventListener("click", function () {
+      var text = buildText(); var out = document.getElementById("feedbackOutput");
+      out.value = text; out.style.display = "block";
+      function fb() { out.focus(); out.select(); try { document.execCommand("copy"); } catch (e) {} }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { document.getElementById("feedbackStatus").textContent = "Copied — paste it into your Claude session."; }, fb);
+      } else { fb(); document.getElementById("feedbackStatus").textContent = "Select the box above and copy, then paste into Claude."; }
+    });
+  }
+})();
+</script>
 </body>
 </html>
