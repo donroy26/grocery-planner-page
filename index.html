@@ -78,12 +78,62 @@
     .feedback-status { font-size: 0.85rem; color: #555; }
     .feedback-output { width: 100%; margin-top: 0.5rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem; min-height: 4rem; display: none; }
     footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: 0.8rem; color: #777; }
+    /* casual access gate (client-side; not real security) */
+    #gate { position: fixed; inset: 0; background: #f5f5f0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    #gate.hidden { display: none; }
+    .gate-card { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 1.5rem; max-width: 320px; width: 100%; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+    .gate-card h2 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+    .gate-card p { font-size: 0.85rem; color: #777; margin-bottom: 1rem; }
+    .gate-card input { width: 100%; padding: 0.6rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 0.6rem; }
+    .gate-card button { width: 100%; background: #0a4c7a; color: #fff; border: none; border-radius: 6px; padding: 0.6rem; font-size: 1rem; font-weight: 600; cursor: pointer; }
+    .gate-err { color: #b71c1c; font-size: 0.85rem; min-height: 1.2rem; margin-top: 0.5rem; }
+    body.locked { overflow: hidden; }
   </style>
 </head>
-<body>
+<body class="locked">
+
+<div id="gate">
+  <div class="gate-card">
+    <h2>🍽️ Weekly Dinners</h2>
+    <p>Enter the password to view this week's plan.</p>
+    <input id="gatePw" type="password" inputmode="text" autocomplete="current-password" placeholder="Password" autofocus>
+    <button id="gateGo" type="button">Open</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var EXPECTED = "046387e2c5d1bc5240f9637fb05290b330af22b757c7c36bdf0e5655700c6a96";          // SHA-256 of the password; empty = no gate
+  var STORE_KEY = "wgp-unlocked";
+  var gate = document.getElementById("gate"), body = document.body;
+  function unlock() { gate.classList.add("hidden"); body.classList.remove("locked"); }
+  // No password configured, or browser lacks crypto.subtle (insecure context): don't gate.
+  if (!EXPECTED || !(window.crypto && window.crypto.subtle)) { unlock(); return; }
+  try { if (localStorage.getItem(STORE_KEY) === EXPECTED) { unlock(); return; } } catch (e) {}
+
+  async function sha256(s) {
+    var buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+  }
+  async function attempt() {
+    var pw = document.getElementById("gatePw").value;
+    var h = await sha256(pw);
+    if (h === EXPECTED) {
+      try { localStorage.setItem(STORE_KEY, EXPECTED); } catch (e) {}
+      unlock();
+    } else {
+      document.getElementById("gateErr").textContent = "Incorrect password.";
+    }
+  }
+  document.getElementById("gateGo").addEventListener("click", attempt);
+  document.getElementById("gatePw").addEventListener("keydown", function (e) { if (e.key === "Enter") attempt(); });
+})();
+</script>
+
 <div class="container">
   <h1>Weekly Dinners</h1>
-  <p class="subtitle">Week of 2026-06-22 &nbsp;·&nbsp; <span id="stateLabel">Approved</span></p>
+  <p class="subtitle">Week of 2026-06-22 &nbsp;·&nbsp; <span id="stateLabel">Pending approval</span></p>
 
   
 
@@ -101,80 +151,28 @@
   <!-- PLAN -->
   <section class="tab-panel active" id="tab-plan">
     <div class="day-card"><h3>Dinner 1</h3>
-<div class="meal-row" data-meal-id="Dinner-1-dinner" data-meal-name="Simple Spaghetti with Meat Sauce"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Simple Spaghetti with Meat Sauce<span class="toddler-tag"> 🧒</span></span><span class="cost">$9.50</span><span class="deal-tag">Fresh Ground Beef Chub</span><div class="meal-desc">Classic spaghetti in hearty beef marinara, topped with parmesan — a guaranteed toddler win.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 lb spaghetti</li><li>24 oz marinara sauce</li><li>1 lb ground beef</li><li>0.25 cup parmesan cheese</li></ul></div></div>
+<div class="meal-row" data-meal-id="Dinner-1-dinner" data-meal-name="Simple Spaghetti with Meat Sauce"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Simple Spaghetti with Meat Sauce<span class="toddler-tag"> 🧒</span></span><span class="cost">$9.50</span><span class="deal-tag">Fresh Ground Beef Chub</span><div class="meal-desc">Classic spaghetti in hearty beef marinara, topped with parmesan — a guaranteed toddler win.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 lb spaghetti</li><li>24 oz marinara sauce</li><li>1 lb ground beef</li><li>0.25 cup parmesan cheese</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Dinner-1-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Dinner-1-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Dinner 2</h3>
-<div class="meal-row" data-meal-id="Dinner-2-dinner" data-meal-name="Sheet Pan Chicken Thighs with Potatoes &amp; Broccoli"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Sheet Pan Chicken Thighs with Potatoes &amp; Broccoli<span class="toddler-tag"> 🧒</span></span><span class="cost">$10.50</span><span class="deal-tag">Kirkwood Fresh Family Pack Chicken Thighs</span><div class="meal-desc">Crispy seasoned thighs roasted with baby potatoes and broccoli on one easy pan.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 lb bone-in chicken thighs</li><li>1.5 lb baby potatoes</li><li>3 cups broccoli florets</li><li>3 tbsp olive oil</li><li>1 tsp garlic powder</li><li>1 tsp paprika</li></ul></div></div>
+<div class="meal-row" data-meal-id="Dinner-2-dinner" data-meal-name="Sheet Pan Chicken Thighs with Potatoes &amp; Broccoli"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Sheet Pan Chicken Thighs with Potatoes &amp; Broccoli<span class="toddler-tag"> 🧒</span></span><span class="cost">$10.50</span><span class="deal-tag">Kirkwood Fresh Family Pack Chicken Thighs</span><div class="meal-desc">Crispy seasoned thighs roasted with baby potatoes and broccoli on one easy pan.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 lb bone-in chicken thighs</li><li>1.5 lb baby potatoes</li><li>3 cups broccoli florets</li><li>3 tbsp olive oil</li><li>1 tsp garlic powder</li><li>1 tsp paprika</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Dinner-2-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Dinner-2-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Dinner 3</h3>
-<div class="meal-row" data-meal-id="Dinner-3-dinner" data-meal-name="Black Bean Tacos with Guacamole"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Black Bean Tacos with Guacamole<span class="toddler-tag"> 🧒</span></span><span class="cost">$10.00</span><span class="deal-tag">Park Street Deli Assorted Fresh Guacamole</span><div class="meal-desc">Warm seasoned black bean tacos with cheddar, salsa, and fresh guac — heat added per plate.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 15-oz cans black beans</li><li>8 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>0.5 cup sour cream</li><li>1 container guacamole</li><li>1 tsp cumin</li><li>0.5 tsp chili powder</li></ul></div></div>
+<div class="meal-row" data-meal-id="Dinner-3-dinner" data-meal-name="Black Bean Tacos with Guacamole"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Black Bean Tacos with Guacamole<span class="toddler-tag"> 🧒</span></span><span class="cost">$10.00</span><span class="deal-tag">Park Street Deli Assorted Fresh Guacamole</span><div class="meal-desc">Warm seasoned black bean tacos with cheddar, salsa, and fresh guac — heat added per plate.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 15-oz cans black beans</li><li>8 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>0.5 cup sour cream</li><li>1 container guacamole</li><li>1 tsp cumin</li><li>0.5 tsp chili powder</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Dinner-3-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Dinner-3-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Dinner 4</h3>
-<div class="meal-row" data-meal-id="Dinner-4-dinner" data-meal-name="Grilled Lemon-Garlic Salmon with Rice &amp; Green Beans"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Grilled Lemon-Garlic Salmon with Rice &amp; Green Beans<span class="toddler-tag"> 🧒</span></span><span class="cost">$16.00</span><span class="deal-tag">Fresh Atlantic Salmon</span><div class="meal-desc">Flaky lemon-garlic salmon off the grill with fluffy rice and tender green beans.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1.5 lb fresh Atlantic salmon</li><li>1.5 cups dry white rice</li><li>12 oz green beans</li><li>1 piece lemon</li><li>3 cloves garlic</li><li>2 tbsp olive oil</li></ul></div></div>
+<div class="meal-row" data-meal-id="Dinner-4-dinner" data-meal-name="Grilled Lemon-Garlic Salmon with Rice &amp; Green Beans"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Grilled Lemon-Garlic Salmon with Rice &amp; Green Beans<span class="toddler-tag"> 🧒</span></span><span class="cost">$16.00</span><span class="deal-tag">Fresh Atlantic Salmon</span><div class="meal-desc">Flaky lemon-garlic salmon off the grill with fluffy rice and tender green beans.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1.5 lb fresh Atlantic salmon</li><li>1.5 cups dry white rice</li><li>12 oz green beans</li><li>1 piece lemon</li><li>3 cloves garlic</li><li>2 tbsp olive oil</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Dinner-4-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Dinner-4-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Dinner 5</h3>
-<div class="meal-row" data-meal-id="Dinner-5-dinner" data-meal-name="Grilled Turkey Burgers with Corn on the Cob"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Grilled Turkey Burgers with Corn on the Cob<span class="toddler-tag"> 🧒</span></span><span class="cost">$15.00</span><span class="deal-tag">Kirkwood Seasoned Turkey Burgers</span><span class="deal-tag">Specially Selected 6-Count Brioche Buns</span><div class="meal-desc">Juicy seasoned turkey burgers on brioche buns with sweet grilled corn alongside.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>4 patties seasoned turkey burgers</li><li>6 pieces brioche buns</li><li>4 slices American cheese slices</li><li>1 pint snacking tomatoes</li><li>1 head lettuce</li><li>4 ears corn on the cob</li></ul></div></div>
+<div class="meal-row" data-meal-id="Dinner-5-dinner" data-meal-name="Grilled Turkey Burgers with Corn on the Cob"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-name">Grilled Turkey Burgers with Corn on the Cob<span class="toddler-tag"> 🧒</span></span><span class="cost">$15.00</span><span class="deal-tag">Kirkwood Seasoned Turkey Burgers</span><span class="deal-tag">Specially Selected 6-Count Brioche Buns</span><div class="meal-desc">Juicy seasoned turkey burgers on brioche buns with sweet grilled corn alongside.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>4 patties seasoned turkey burgers</li><li>6 pieces brioche buns</li><li>4 slices American cheese slices</li><li>1 pint snacking tomatoes</li><li>1 head lettuce</li><li>4 ears corn on the cob</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Dinner-5-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Dinner-5-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
     <div class="notes-box"><strong>Notes:</strong> Single-store shop at Aldi — everything is ~5 min away and Aldi carries this week&#x27;s best proteins (ground beef chub $2.99, family-pack chicken thighs $1.55/lb, turkey burgers, fresh salmon), so a Costco run isn&#x27;t worth it for a ~$61 week. Five fast, easy dinners (3 are your saved staples, 2 grill nights for the season) sized to ~4 servings each so leftovers cover next-day lunches. None repeat last week&#x27;s list. Pork avoided per wife&#x27;s preference. Spice stays mild in the pot — salsa, hot sauce, and chili flakes are added per plate so the toddler always gets a mild portion. Adjust here before approving if you&#x27;d rather swap the salmon night.</div>
     <div class="deals-section"><h2>Deals used this week</h2><ul style="padding-left:1.25rem;font-size:.9rem"><li><strong>Fresh Ground Beef Chub</strong> — $2.99 at ALDI</li><li><strong>Kirkwood Fresh Family Pack Chicken Thighs</strong> — $1.55 at ALDI</li><li><strong>Park Street Deli Assorted Fresh Guacamole</strong> — $2.99 at ALDI</li><li><strong>Fresh Atlantic Salmon</strong> — $8.99 at ALDI</li><li><strong>Kirkwood Seasoned Turkey Burgers</strong> — $6.99 at ALDI</li><li><strong>Specially Selected 6-Count Brioche Buns</strong> — $3.99 at ALDI</li></ul></div>
-    
+    <div class="feedback-bar"><button class="copy-btn" id="copyFeedback" type="button">📋 Copy feedback</button><span class="feedback-status" id="feedbackStatus">No meals marked yet.</span><textarea class="feedback-output" id="feedbackOutput" readonly></textarea></div>
   </section>
 
   <!-- SHOP -->
   <section class="tab-panel" id="tab-shop">
-    <div class="grocery-category"><h3>Produce</h3><ul>
-<li><label><input type="checkbox"> 1.5 lb baby potatoes</label></li>
-<li><label><input type="checkbox"> 1 bunch bananas</label></li>
-<li><label><input type="checkbox"> 1 container black pepper</label></li>
-<li><label><input type="checkbox"> 3 cups broccoli florets</label></li>
-<li><label><input type="checkbox"> 3 cloves garlic</label></li>
-<li><label><input type="checkbox"> 1 tsp garlic powder</label></li>
-<li><label><input type="checkbox"> 1 container garlic powder</label></li>
-<li><label><input type="checkbox"> 1 piece lemon</label></li>
-<li><label><input type="checkbox"> 1 head lettuce</label></li>
-<li><label><input type="checkbox"> 1 pint snacking tomatoes</label></li>
-</ul></div>
-<div class="grocery-category"><h3>Meat</h3><ul>
-<li><label><input type="checkbox"> 2 lb bone-in chicken thighs</label></li>
-<li><label><input type="checkbox"> 1.5 lb fresh Atlantic salmon</label></li>
-<li><label><input type="checkbox"> 1 lb ground beef</label></li>
-<li><label><input type="checkbox"> 4 patties seasoned turkey burgers</label></li>
-</ul></div>
-<div class="grocery-category"><h3>Dairy</h3><ul>
-<li><label><input type="checkbox"> 4 slices American cheese slices</label></li>
-<li><label><input type="checkbox"> 1 lb butter</label></li>
-<li><label><input type="checkbox"> 1 dozen eggs</label></li>
-<li><label><input type="checkbox"> 1 gallon milk</label></li>
-<li><label><input type="checkbox"> 0.25 cup parmesan cheese</label></li>
-<li><label><input type="checkbox"> 1 cup shredded cheddar</label></li>
-<li><label><input type="checkbox"> 0.5 cup sour cream</label></li>
-</ul></div>
-<div class="grocery-category"><h3>Bakery</h3><ul>
-<li><label><input type="checkbox"> 1 loaf bread</label></li>
-<li><label><input type="checkbox"> 6 pieces brioche buns</label></li>
-<li><label><input type="checkbox"> 8 pieces flour tortillas</label></li>
-</ul></div>
-<div class="grocery-category"><h3>Pantry</h3><ul>
-<li><label><input type="checkbox"> 2 15-oz cans black beans</label></li>
-<li><label><input type="checkbox"> 0.5 tsp chili powder</label></li>
-<li><label><input type="checkbox"> 1 tsp cumin</label></li>
-<li><label><input type="checkbox"> 12 oz green beans</label></li>
-<li><label><input type="checkbox"> 24 oz marinara sauce</label></li>
-<li><label><input type="checkbox"> 5 tbsp olive oil</label></li>
-<li><label><input type="checkbox"> 1 bottle olive oil</label></li>
-<li><label><input type="checkbox"> 1 tsp paprika</label></li>
-<li><label><input type="checkbox"> 1 cup salsa</label></li>
-<li><label><input type="checkbox"> 1 container salt</label></li>
-<li><label><input type="checkbox"> 1.5 cups dry white rice</label></li>
-</ul></div>
-<div class="grocery-category"><h3>Beverages</h3><ul>
-<li><label><input type="checkbox"> 1 bag coffee</label></li>
-</ul></div>
-<div class="grocery-category"><h3>Other</h3><ul>
-<li><label><input type="checkbox"> 4 ears corn on the cob</label></li>
-<li><label><input type="checkbox"> 1 container guacamole</label></li>
-<li><label><input type="checkbox"> 1 lb spaghetti</label></li>
-</ul></div>
+    <div class="locked-msg">Your shopping list appears here once you approve the plan.</div>
   </section>
 
   <!-- COOK -->
@@ -266,7 +264,7 @@ Ingredients:
 </div>
   </section>
 
-  <footer>weekly-grocery-planner · Approved · Week of 2026-06-22</footer>
+  <footer>weekly-grocery-planner · Pending approval · Week of 2026-06-22</footer>
 </div>
 
 <script>
