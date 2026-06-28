@@ -3,199 +3,242 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>This Week's Meals — 2026-06-22</title>
+  <title>Meal Plan Review — Week of 2026-06-22</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 1rem; line-height: 1.6; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 1rem; line-height: 1.5; }
     .container { max-width: 720px; margin: 0 auto; }
     h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
     .subtitle { color: #555; font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .high-cost-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-weight: 600; color: #856404; }
+    .instructions-card { background: #e8f4fd; border: 1px solid #b8d8f0; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+    .instructions-card h2 { font-size: 1rem; margin-bottom: 0.5rem; color: #0a4c7a; }
+    .instructions-card ol { padding-left: 1.25rem; }
+    .instructions-card li { margin-bottom: 0.25rem; }
+    code { background: #fff; border: 1px solid #ccc; border-radius: 3px; padding: 0.1em 0.4em; font-size: 0.9em; }
     .summary-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
     .summary-chip { background: #fff; border: 1px solid #ddd; border-radius: 20px; padding: 0.4rem 0.85rem; font-size: 0.9rem; }
     .summary-chip strong { color: #333; }
-    .section-title { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #ddd; padding-bottom: 0.35rem; }
+    .plan-section h2 { font-size: 1.15rem; margin-bottom: 0.75rem; border-bottom: 2px solid #ddd; padding-bottom: 0.35rem; }
     .day-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; }
-    .day-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: #222; }
-    .meal-block { margin-bottom: 0.85rem; padding-bottom: 0.85rem; border-bottom: 1px solid #f0f0f0; }
-    .meal-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    .meal-header { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
-    .meal-type { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #777; min-width: 70px; }
-    .meal-name { font-size: 1rem; font-weight: 600; }
-    .meal-desc { font-size: 0.88rem; color: #555; margin: 0 0 0.4rem 0; line-height: 1.4; font-style: italic; }
-    .toddler-tag { font-size: 0.78rem; color: #e67e22; }
-    .ingredients-list { list-style: disc; padding-left: 1.5rem; font-size: 0.9rem; color: #444; }
-    .ingredients-list li { margin-bottom: 0.1rem; }
-    .steps-list { list-style: decimal; padding-left: 1.5rem; font-size: 0.9rem; color: #444; margin-top: 0.4rem; }
-    .steps-list li { margin-bottom: 0.1rem; }
-    .grocery-section { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.25rem; margin-top: 0.75rem; }
-    .grocery-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; }
-    .grocery-category h3 { font-size: 0.9rem; text-transform: uppercase; color: #555; font-weight: 700; margin: 0.75rem 0 0.35rem; letter-spacing: 0.04em; }
-    .grocery-category ul { list-style: disc; padding-left: 1.5rem; font-size: 0.92rem; }
-    .grocery-category li { margin-bottom: 0.15rem; }
-    .instacart-link { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0.6rem 1rem; margin-bottom: 0.75rem; }
-    .instacart-link a { color: #2e7d32; font-weight: 600; text-decoration: none; }
-    .instacart-link a:hover { text-decoration: underline; }
-    .notes-box { background: #fffbf0; border: 1px solid #ffe082; border-radius: 6px; padding: 0.6rem 1rem; margin-top: 1rem; font-size: 0.9rem; color: #555; }
+    .day-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: #222; }
+    .meal-row { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.25rem 0; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; }
+    .meal-row:last-child { border-bottom: none; }
+    .meal-type { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: #777; min-width: 70px; }
+    .meal-name { flex: 1; font-size: 0.95rem; }
+    .meal-desc { flex-basis: 100%; font-size: 0.85rem; color: #555; margin: 0.1rem 0 0.15rem 1.9rem; line-height: 1.35; }
+    .cost { font-size: 0.85rem; color: #228B22; font-weight: 600; white-space: nowrap; }
+    .deal-tag { font-size: 0.78rem; background: #d4edda; color: #155724; border-radius: 3px; padding: 0.1em 0.4em; }
+    .toddler-tag { font-size: 0.78rem; }
+    /* interactive review */
+    .meal-row { flex-direction: column; align-items: stretch; gap: 0; }
+    .meal-line { display: flex; gap: 0.5rem; align-items: baseline; flex-wrap: wrap; }
+    .expand-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; color: #888; padding: 0 0.25rem 0 0; line-height: 1; align-self: center; transition: transform .15s; }
+    .expand-btn[aria-expanded="true"] { transform: rotate(90deg); color: #333; }
+    .meal-detail { margin: 0.5rem 0 0.25rem 1.9rem; padding: 0.5rem 0.75rem; background: #fafafa; border: 1px solid #eee; border-radius: 6px; }
+    .detail-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: #999; font-weight: 700; margin: 0.35rem 0 0.15rem; }
+    .ingredients-list { list-style: disc; padding-left: 1.4rem; font-size: 0.88rem; color: #444; }
+    .steps-list { list-style: decimal; padding-left: 1.4rem; font-size: 0.88rem; color: #444; }
+    .no-detail { font-size: 0.85rem; color: #999; font-style: italic; }
+    .verdict-bar { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; margin: 0.5rem 0 0.25rem 1.9rem; }
+    .verdict-bar button { border: 1px solid #ccc; background: #fff; border-radius: 6px; padding: 0.3rem 0.7rem; font-size: 0.85rem; cursor: pointer; }
+    .verdict-bar .v-accept.on { background: #d4edda; border-color: #4caf50; color: #1b5e20; font-weight: 600; }
+    .verdict-bar .v-reject.on { background: #fdecea; border-color: #e57373; color: #b71c1c; font-weight: 600; }
+    .reject-why { font-size: 0.82rem; color: #555; display: inline-flex; gap: 0.6rem; }
+    .reject-why label { cursor: pointer; }
+    .note { flex: 1; min-width: 120px; border: 1px solid #ddd; border-radius: 6px; padding: 0.3rem 0.5rem; font-size: 0.85rem; }
+    .meal-row.accepted { background: #f5fbf6; }
+    .meal-row.rejected { background: #fdf6f5; }
+    /* feedback action bar */
+    .feedback-bar { position: sticky; bottom: 0; background: #fff; border-top: 2px solid #ddd; padding: 0.75rem 0; margin-top: 1.5rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .copy-btn { background: #0a4c7a; color: #fff; border: none; border-radius: 6px; padding: 0.55rem 1.1rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+    .copy-btn:active { background: #073a5e; }
+    .feedback-status { font-size: 0.85rem; color: #555; }
+    .feedback-output { width: 100%; margin-top: 0.5rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem; min-height: 4rem; display: none; }
+    .deals-section, .notes-section { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.85rem 1rem; margin-top: 1rem; }
+    .deals-section h2, .notes-section h2 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .deals-section ul { padding-left: 1.25rem; font-size: 0.9rem; }
+    .deals-section li { margin-bottom: 0.2rem; }
+    .weekly-total { font-size: 1.05rem; font-weight: 700; margin-top: 1rem; text-align: right; }
     footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: 0.82rem; color: #777; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>This Week's Meals</h1>
-  <p class="subtitle">Week of 2026-06-22 &nbsp;·&nbsp; Approved</p>
+  <h1>Meal Plan Review</h1>
+  <p class="subtitle">Week of 2026-06-22 &nbsp;·&nbsp; Phase 1: Pending Approval</p>
 
-  <div class="summary-row">
-    <div class="summary-chip"><strong>Weekly cost est.:</strong> $108.00</div>
-    <div class="summary-chip"><strong>Store:</strong> Aldi</div>
-    <div class="summary-chip"><strong>Grocery mode:</strong> list</div>
+  
+
+  <div class="instructions-card">
+    <h2>How to review from your phone</h2>
+    <ol>
+      <li>Tap <strong>▸</strong> on any dinner to see its full recipe (ingredients + steps).</li>
+      <li>Mark each meal <strong>✓ Accept</strong> or <strong>✕ Reject</strong>. On reject, pick <em>dislike</em> (never suggest again) or <em>not today</em> (just not this week). Add a note if you want.</li>
+      <li>Tap <strong>Copy feedback</strong> at the bottom, then paste it back into your Claude session. The agent re-plans the rejects, keeps &amp; saves the accepts, and remembers your notes.</li>
+    </ol>
   </div>
 
-  <div class="section-title">Meal Plan</div>
-  <div class="day-card"><h3>Monday</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Breakfast</span><span class="meal-name">Yogurt & Fruit Cups<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Creamy yogurt layered with sweet green grapes and graham crackers for an easy grab-and-go start.</div>
-<ul class="ingredients-list"><li>32 oz vanilla yogurt</li><li>1 lb green grapes</li><li>1 box honey graham crackers</li></ul>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Lunch</span><span class="meal-name">Cheese Quesadillas<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Golden griddled tortillas oozing with melty cheddar, cut into toddler-friendly triangles with salsa.</div>
-<ul class="ingredients-list"><li>6 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>0.5 cup salsa</li></ul>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Black Bean Tacos<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Warm seasoned black beans piled into soft tortillas with cheese and salsa; add hot sauce per plate.</div>
-<ul class="ingredients-list"><li>2 15-oz cans black beans</li><li>8 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>0.5 cup sour cream</li><li>1 tsp cumin</li><li>0.5 tsp chili powder</li></ul>
-</div>
+  <div class="summary-row">
+    <div class="summary-chip"><strong>Est. weekly cost:</strong> $108.00</div>
+    <div class="summary-chip"><strong>Recommended store:</strong> Aldi</div>
+  </div>
+
+  <div class="plan-section">
+    <h2>Proposed Plan</h2>
+    <div class="day-card"><h3>Monday</h3>
+<div class="meal-row" data-meal-id="Monday-breakfast" data-meal-name="Yogurt &amp; Fruit Cups"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Breakfast</span><span class="meal-name">Yogurt &amp; Fruit Cups<span class="toddler-tag"> 🧒</span></span><span class="cost">$6.00</span><span class="deal-tag">Green Grapes</span><span class="deal-tag">Benton&#x27;s Honey Graham Crackers</span><div class="meal-desc">Creamy yogurt layered with sweet green grapes and graham crackers for an easy grab-and-go start.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>32 oz vanilla yogurt</li><li>1 lb green grapes</li><li>1 box honey graham crackers</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Monday-breakfast" value="dislike"> dislike</label><label><input type="radio" name="why-Monday-breakfast" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Monday-lunch" data-meal-name="Cheese Quesadillas"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Lunch</span><span class="meal-name">Cheese Quesadillas<span class="toddler-tag"> 🧒</span></span><span class="cost">$4.00</span><div class="meal-desc">Golden griddled tortillas oozing with melty cheddar, cut into toddler-friendly triangles with salsa.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>6 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>0.5 cup salsa</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Monday-lunch" value="dislike"> dislike</label><label><input type="radio" name="why-Monday-lunch" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Monday-dinner" data-meal-name="Black Bean Tacos"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Black Bean Tacos<span class="toddler-tag"> 🧒</span></span><span class="cost">$8.00</span><span class="deal-tag">Casa Mamita Salsa Con Queso</span><div class="meal-desc">Warm seasoned black beans piled into soft tortillas with cheese and salsa; add hot sauce per plate.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 15-oz cans black beans</li><li>8 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>0.5 cup sour cream</li><li>1 tsp cumin</li><li>0.5 tsp chili powder</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Monday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Monday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Tuesday</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Breakfast</span><span class="meal-name">Toast & Fruit<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Buttered toast with juicy fresh peach slices for a light, no-fuss morning.</div>
-<ul class="ingredients-list"><li>1 loaf sandwich bread</li><li>0.25 cup butter</li><li>1 lb peaches</li></ul>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Black Bean Tacos<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Yesterday's hearty black bean tacos, reheated and just as tasty the second day.</div>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Simple Spaghetti<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Classic spaghetti in rich beefy marinara topped with parmesan — a guaranteed toddler crowd-pleaser.</div>
-<ul class="ingredients-list"><li>1 lb spaghetti</li><li>24 oz marinara sauce</li><li>0.5 lb ground beef</li><li>0.25 cup parmesan cheese</li></ul>
-</div>
+<div class="meal-row" data-meal-id="Tuesday-breakfast" data-meal-name="Toast &amp; Fruit"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Breakfast</span><span class="meal-name">Toast &amp; Fruit<span class="toddler-tag"> 🧒</span></span><span class="cost">$4.00</span><span class="deal-tag">Peaches</span><div class="meal-desc">Buttered toast with juicy fresh peach slices for a light, no-fuss morning.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 loaf sandwich bread</li><li>0.25 cup butter</li><li>1 lb peaches</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Tuesday-breakfast" value="dislike"> dislike</label><label><input type="radio" name="why-Tuesday-breakfast" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Tuesday-lunch" data-meal-name="Leftovers: Black Bean Tacos"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Black Bean Tacos<span class="toddler-tag"> 🧒</span></span><div class="meal-desc">Yesterday&#x27;s hearty black bean tacos, reheated and just as tasty the second day.</div></div><div class="meal-detail" hidden><p class="no-detail">No recipe detail for this meal.</p></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Tuesday-lunch" value="dislike"> dislike</label><label><input type="radio" name="why-Tuesday-lunch" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Tuesday-dinner" data-meal-name="Simple Spaghetti"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Simple Spaghetti<span class="toddler-tag"> 🧒</span></span><span class="cost">$9.00</span><span class="deal-tag">Fresh Ground Beef Chub</span><div class="meal-desc">Classic spaghetti in rich beefy marinara topped with parmesan — a guaranteed toddler crowd-pleaser.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 lb spaghetti</li><li>24 oz marinara sauce</li><li>0.5 lb ground beef</li><li>0.25 cup parmesan cheese</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Tuesday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Tuesday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Wednesday</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Breakfast</span><span class="meal-name">Yogurt & Berries<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Cool yogurt swirled with fresh raspberries for a quick, bright bite.</div>
-<ul class="ingredients-list"><li>16 oz vanilla yogurt</li><li>6 oz raspberries</li></ul>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Simple Spaghetti<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Reheated spaghetti and marinara — even better after the flavors meld overnight.</div>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Sheet Pan Chicken Thighs<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Crispy roasted chicken thighs with tender potatoes and broccoli, all on one easy pan.</div>
-<ul class="ingredients-list"><li>4 pieces bone-in chicken thighs</li><li>1 lb baby potatoes</li><li>2 cups broccoli florets</li><li>3 tbsp olive oil</li><li>1 tsp garlic powder</li><li>1 tsp paprika</li></ul>
-</div>
+<div class="meal-row" data-meal-id="Wednesday-breakfast" data-meal-name="Yogurt &amp; Berries"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Breakfast</span><span class="meal-name">Yogurt &amp; Berries<span class="toddler-tag"> 🧒</span></span><span class="cost">$3.50</span><span class="deal-tag">Raspberries</span><div class="meal-desc">Cool yogurt swirled with fresh raspberries for a quick, bright bite.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>16 oz vanilla yogurt</li><li>6 oz raspberries</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Wednesday-breakfast" value="dislike"> dislike</label><label><input type="radio" name="why-Wednesday-breakfast" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Wednesday-lunch" data-meal-name="Leftovers: Simple Spaghetti"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Simple Spaghetti<span class="toddler-tag"> 🧒</span></span><div class="meal-desc">Reheated spaghetti and marinara — even better after the flavors meld overnight.</div></div><div class="meal-detail" hidden><p class="no-detail">No recipe detail for this meal.</p></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Wednesday-lunch" value="dislike"> dislike</label><label><input type="radio" name="why-Wednesday-lunch" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Wednesday-dinner" data-meal-name="Sheet Pan Chicken Thighs"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Sheet Pan Chicken Thighs<span class="toddler-tag"> 🧒</span></span><span class="cost">$9.00</span><span class="deal-tag">Kirkwood Fresh Family Pack Chicken Thighs</span><div class="meal-desc">Crispy roasted chicken thighs with tender potatoes and broccoli, all on one easy pan.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>4 pieces bone-in chicken thighs</li><li>1 lb baby potatoes</li><li>2 cups broccoli florets</li><li>3 tbsp olive oil</li><li>1 tsp garlic powder</li><li>1 tsp paprika</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Wednesday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Wednesday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Thursday</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Breakfast</span><span class="meal-name">Grab-and-Go Fruit & Cheese<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Sweet grapes and sharp cheddar cracker cuts — a no-cook protein-packed start.</div>
-<ul class="ingredients-list"><li>0.5 lb green grapes</li><li>1 pack cheddar cracker cuts</li></ul>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Sheet Pan Chicken Thighs<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Reheated roast chicken with potatoes and broccoli — a satisfying packed lunch.</div>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Grilled Turkey Burgers<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Juicy seasoned turkey burgers on toasted brioche buns; pile on toppings and heat per plate.</div>
-<ul class="ingredients-list"><li>4 patties seasoned turkey burgers</li><li>6 pieces brioche buns</li><li>4 slices american cheese slices</li><li>1 pint snacking tomatoes</li><li>1 pack mini cucumbers</li></ul>
-</div>
+<div class="meal-row" data-meal-id="Thursday-breakfast" data-meal-name="Grab-and-Go Fruit &amp; Cheese"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Breakfast</span><span class="meal-name">Grab-and-Go Fruit &amp; Cheese<span class="toddler-tag"> 🧒</span></span><span class="cost">$3.50</span><span class="deal-tag">Happy Farms Extra Sharp Cheddar or Gouda Cracker Cuts</span><div class="meal-desc">Sweet grapes and sharp cheddar cracker cuts — a no-cook protein-packed start.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>0.5 lb green grapes</li><li>1 pack cheddar cracker cuts</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Thursday-breakfast" value="dislike"> dislike</label><label><input type="radio" name="why-Thursday-breakfast" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Thursday-lunch" data-meal-name="Leftovers: Sheet Pan Chicken Thighs"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Sheet Pan Chicken Thighs<span class="toddler-tag"> 🧒</span></span><div class="meal-desc">Reheated roast chicken with potatoes and broccoli — a satisfying packed lunch.</div></div><div class="meal-detail" hidden><p class="no-detail">No recipe detail for this meal.</p></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Thursday-lunch" value="dislike"> dislike</label><label><input type="radio" name="why-Thursday-lunch" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Thursday-dinner" data-meal-name="Grilled Turkey Burgers"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Grilled Turkey Burgers<span class="toddler-tag"> 🧒</span></span><span class="cost">$11.00</span><span class="deal-tag">Kirkwood Seasoned Turkey Burgers</span><span class="deal-tag">Specially Selected 6-Count Brioche Buns</span><span class="deal-tag">Snacking Tomatoes On the Vine</span><span class="deal-tag">Mini Cucumbers</span><div class="meal-desc">Juicy seasoned turkey burgers on toasted brioche buns; pile on toppings and heat per plate.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>4 patties seasoned turkey burgers</li><li>6 pieces brioche buns</li><li>4 slices american cheese slices</li><li>1 pint snacking tomatoes</li><li>1 pack mini cucumbers</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Thursday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Thursday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Friday</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Breakfast</span><span class="meal-name">Toast & Fruit<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Buttered toast with fresh peaches — light and quick before the day starts.</div>
-<ul class="ingredients-list"><li>1 loaf sandwich bread</li><li>0.5 lb peaches</li></ul>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Grilled Turkey Burgers<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Leftover turkey burger on a bun — a hearty hand-held lunch reheated in minutes.</div>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Sheet Pan Salmon & Veggies<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Flaky Atlantic salmon roasted with potatoes and broccoli, finished with a squeeze of lemon.</div>
-<ul class="ingredients-list"><li>1 lb fresh Atlantic salmon</li><li>1 lb baby potatoes</li><li>2 cups broccoli florets</li><li>2 tbsp olive oil</li><li>1 piece lemon</li></ul>
-</div>
+<div class="meal-row" data-meal-id="Friday-breakfast" data-meal-name="Toast &amp; Fruit"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Breakfast</span><span class="meal-name">Toast &amp; Fruit<span class="toddler-tag"> 🧒</span></span><span class="cost">$2.50</span><span class="deal-tag">Peaches</span><div class="meal-desc">Buttered toast with fresh peaches — light and quick before the day starts.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 loaf sandwich bread</li><li>0.5 lb peaches</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Friday-breakfast" value="dislike"> dislike</label><label><input type="radio" name="why-Friday-breakfast" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Friday-lunch" data-meal-name="Leftovers: Grilled Turkey Burgers"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Grilled Turkey Burgers<span class="toddler-tag"> 🧒</span></span><div class="meal-desc">Leftover turkey burger on a bun — a hearty hand-held lunch reheated in minutes.</div></div><div class="meal-detail" hidden><p class="no-detail">No recipe detail for this meal.</p></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Friday-lunch" value="dislike"> dislike</label><label><input type="radio" name="why-Friday-lunch" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Friday-dinner" data-meal-name="Sheet Pan Salmon &amp; Veggies"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Sheet Pan Salmon &amp; Veggies<span class="toddler-tag"> 🧒</span></span><span class="cost">$13.00</span><span class="deal-tag">Fresh Atlantic Salmon</span><div class="meal-desc">Flaky Atlantic salmon roasted with potatoes and broccoli, finished with a squeeze of lemon.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 lb fresh Atlantic salmon</li><li>1 lb baby potatoes</li><li>2 cups broccoli florets</li><li>2 tbsp olive oil</li><li>1 piece lemon</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Friday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Friday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Saturday</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Breakfast</span><span class="meal-name">Scrambled Eggs & Toast<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Soft scrambled eggs with buttered toast — a relaxed weekend morning plate.</div>
-<ul class="ingredients-list"><li>6 pieces eggs</li><li>2 tbsp butter</li><li>4 slices sandwich bread</li></ul>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Sheet Pan Salmon & Veggies<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Flaked leftover salmon and roasted veggies, great warm or cold over a quick bowl.</div>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Grilled Italian Sausage & Peppers<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Smoky grilled Italian sausage with sweet peppers and onions over pasta; mild sausage keeps it toddler-safe.</div>
-<ul class="ingredients-list"><li>1 lb mild Italian sausage</li><li>2 pieces red peppers</li><li>8 oz white mushrooms</li><li>1 lb pasta</li><li>12 oz marinara sauce</li></ul>
-</div>
+<div class="meal-row" data-meal-id="Saturday-breakfast" data-meal-name="Scrambled Eggs &amp; Toast"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Breakfast</span><span class="meal-name">Scrambled Eggs &amp; Toast<span class="toddler-tag"> 🧒</span></span><span class="cost">$3.50</span><div class="meal-desc">Soft scrambled eggs with buttered toast — a relaxed weekend morning plate.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>6 pieces eggs</li><li>2 tbsp butter</li><li>4 slices sandwich bread</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Saturday-breakfast" value="dislike"> dislike</label><label><input type="radio" name="why-Saturday-breakfast" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Saturday-lunch" data-meal-name="Leftovers: Sheet Pan Salmon &amp; Veggies"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Sheet Pan Salmon &amp; Veggies<span class="toddler-tag"> 🧒</span></span><div class="meal-desc">Flaked leftover salmon and roasted veggies, great warm or cold over a quick bowl.</div></div><div class="meal-detail" hidden><p class="no-detail">No recipe detail for this meal.</p></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Saturday-lunch" value="dislike"> dislike</label><label><input type="radio" name="why-Saturday-lunch" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Saturday-dinner" data-meal-name="Grilled Italian Sausage &amp; Peppers"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Grilled Italian Sausage &amp; Peppers<span class="toddler-tag"> 🧒</span></span><span class="cost">$11.00</span><span class="deal-tag">Mild or Hot Italian Sausage</span><span class="deal-tag">Whole White Mushrooms</span><div class="meal-desc">Smoky grilled Italian sausage with sweet peppers and onions over pasta; mild sausage keeps it toddler-safe.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 lb mild Italian sausage</li><li>2 pieces red peppers</li><li>8 oz white mushrooms</li><li>1 lb pasta</li><li>12 oz marinara sauce</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Saturday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Saturday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
 <div class="day-card"><h3>Sunday</h3>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Breakfast</span><span class="meal-name">Yogurt, Grapes & Crackers<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Yogurt with grapes and cheese crackers — an easy, no-cook family breakfast.</div>
-<ul class="ingredients-list"><li>16 oz vanilla yogurt</li><li>0.5 lb green grapes</li><li>1 box cheese crackers</li></ul>
+<div class="meal-row" data-meal-id="Sunday-breakfast" data-meal-name="Yogurt, Grapes &amp; Crackers"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Breakfast</span><span class="meal-name">Yogurt, Grapes &amp; Crackers<span class="toddler-tag"> 🧒</span></span><span class="cost">$4.00</span><span class="deal-tag">Savoritz Family Size Cheese Crackers</span><div class="meal-desc">Yogurt with grapes and cheese crackers — an easy, no-cook family breakfast.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>16 oz vanilla yogurt</li><li>0.5 lb green grapes</li><li>1 box cheese crackers</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Sunday-breakfast" value="dislike"> dislike</label><label><input type="radio" name="why-Sunday-breakfast" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Sunday-lunch" data-meal-name="Leftovers: Grilled Italian Sausage &amp; Peppers"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Grilled Italian Sausage &amp; Peppers<span class="toddler-tag"> 🧒</span></span><div class="meal-desc">Reheated sausage, peppers, and pasta — a filling Sunday lunch with no extra cooking.</div></div><div class="meal-detail" hidden><p class="no-detail">No recipe detail for this meal.</p></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Sunday-lunch" value="dislike"> dislike</label><label><input type="radio" name="why-Sunday-lunch" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-row" data-meal-id="Sunday-dinner" data-meal-name="Grilled Chicken Skewers with Rice"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Grilled Chicken Skewers with Rice<span class="toddler-tag"> 🧒</span></span><span class="cost">$13.00</span><span class="deal-tag">Seasoned Chicken Skewers</span><div class="meal-desc">Tender seasoned chicken skewers off the grill with fluffy rice and cucumbers; add heat per plate.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 packs seasoned chicken skewers</li><li>2 cups white rice</li><li>1 pack mini cucumbers</li><li>1 pint snacking tomatoes</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Sunday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Sunday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
 </div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Lunch</span><span class="meal-name">Leftovers: Grilled Italian Sausage & Peppers<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Reheated sausage, peppers, and pasta — a filling Sunday lunch with no extra cooking.</div>
-</div>
-<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Grilled Chicken Skewers with Rice<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Tender seasoned chicken skewers off the grill with fluffy rice and cucumbers; add heat per plate.</div>
-<ul class="ingredients-list"><li>2 packs seasoned chicken skewers</li><li>2 cups white rice</li><li>1 pack mini cucumbers</li><li>1 pint snacking tomatoes</li></ul>
-</div>
-</div>
+  </div>
 
-  <div class="section-title">Grocery List</div>
-  <div class="grocery-section">
-    <div class="grocery-category"><h3>Produce</h3><ul>
-<li>2 lb baby potatoes</li>
-<li>1 bunch bananas</li>
-<li>1 container black pepper</li>
-<li>4 cups broccoli florets</li>
-<li>1 tsp garlic powder</li>
-<li>1 container garlic powder</li>
-<li>1 piece lemon</li>
-<li>2 pack mini cucumbers</li>
-<li>2 pieces red peppers</li>
-<li>2 pint snacking tomatoes</li>
-<li>8 oz white mushrooms</li>
-</ul></div>
-<div class="grocery-category"><h3>Meat</h3><ul>
-<li>4 pieces bone-in chicken thighs</li>
-<li>1 lb fresh Atlantic salmon</li>
-<li>0.5 lb ground beef</li>
-<li>1 box honey graham crackers</li>
-<li>1 lb mild Italian sausage</li>
-<li>2 packs seasoned chicken skewers</li>
-<li>4 patties seasoned turkey burgers</li>
-</ul></div>
-<div class="grocery-category"><h3>Dairy</h3><ul>
-<li>4 slices american cheese slices</li>
-<li>0.25 cup butter</li>
-<li>2 tbsp butter</li>
-<li>1 lb butter</li>
-<li>1 pack cheddar cracker cuts</li>
-<li>1 box cheese crackers</li>
-<li>6 pieces eggs</li>
-<li>1 dozen eggs</li>
-<li>1 gallon milk</li>
-<li>0.25 cup parmesan cheese</li>
-<li>2 cup shredded cheddar</li>
-<li>0.5 cup sour cream</li>
-<li>64 oz vanilla yogurt</li>
-</ul></div>
-<div class="grocery-category"><h3>Bakery</h3><ul>
-<li>1 loaf bread</li>
-<li>6 pieces brioche buns</li>
-<li>14 pieces flour tortillas</li>
-<li>2 loaf sandwich bread</li>
-<li>4 slices sandwich bread</li>
-</ul></div>
-<div class="grocery-category"><h3>Pantry</h3><ul>
-<li>2 15-oz cans black beans</li>
-<li>0.5 tsp chili powder</li>
-<li>1 tsp cumin</li>
-<li>36 oz marinara sauce</li>
-<li>5 tbsp olive oil</li>
-<li>1 bottle olive oil</li>
-<li>1 tsp paprika</li>
-<li>1 lb pasta</li>
-<li>1.5 cup salsa</li>
-<li>1 container salt</li>
-<li>2 cups white rice</li>
-</ul></div>
-<div class="grocery-category"><h3>Beverages</h3><ul>
-<li>1 bag coffee</li>
-</ul></div>
-<div class="grocery-category"><h3>Other</h3><ul>
-<li>2 lb green grapes</li>
-<li>1.5 lb peaches</li>
-<li>6 oz raspberries</li>
-<li>1 lb spaghetti</li>
-</ul></div>
+  <p class="weekly-total">Estimated weekly total: $108.00</p>
+
+  <div class="deals-section">
+    <h2>Deals Used This Week</h2>
+    <ul style="padding-left:1.25rem;font-size:.9rem"><li><strong>Fresh Ground Beef Chub</strong> — $2.99 at ALDI</li><li><strong>Kirkwood Fresh Family Pack Chicken Thighs</strong> — $1.55 at ALDI</li><li><strong>Kirkwood Seasoned Turkey Burgers</strong> — $6.99 at ALDI</li><li><strong>Fresh Atlantic Salmon</strong> — $8.99 at ALDI</li><li><strong>Mild or Hot Italian Sausage</strong> — $2.99 at ALDI</li><li><strong>Seasoned Chicken Skewers</strong> — $7.49 at ALDI</li><li><strong>Specially Selected 6-Count Brioche Buns</strong> — $3.99 at ALDI</li><li><strong>Snacking Tomatoes On the Vine</strong> — $2.29 at ALDI</li><li><strong>Mini Cucumbers</strong> — $1.69 at ALDI</li><li><strong>Whole White Mushrooms</strong> — $1.29 at ALDI</li><li><strong>Green Grapes</strong> — $1.49 at ALDI</li><li><strong>Raspberries</strong> — $1.99 at ALDI</li><li><strong>Peaches</strong> — $1.69 at ALDI</li><li><strong>Happy Farms Extra Sharp Cheddar or Gouda Cracker Cuts</strong> — $2.79 at ALDI</li><li><strong>Casa Mamita Salsa Con Queso</strong> — $2.19 at ALDI</li><li><strong>Savoritz Family Size Cheese Crackers</strong> — $3.79 at ALDI</li></ul>
   </div>
 
   <div class="notes-box"><strong>Notes:</strong> Single-store week at Aldi (~5 min away) — it carries this week's strongest protein deals (ground beef $2.99, chicken thighs $1.55, turkey burgers $6.99, salmon $8.99, Italian sausage $2.99, chicken skewers $7.49) plus all the produce and snacks, so there's no reason to split the trip or chase a Costco run for ~$108 total. Weeknight dinners (Mon-Fri) are all fast/one-pan or grill; the more involved sausage-and-peppers and chicken skewers fall on the weekend. Pork was avoided entirely per the soft no — turkey burgers and Italian sausage stand in for any pork option despite cheap rib/chop sales. Every dinner is mild-by-default with heat (hot sauce, salsa con queso) added per plate so the toddler always gets a plain portion. Lunches Tue-Sun run on the prior night's leftovers; Monday lunch is a simple cheese quesadilla since there's nothing to carry over yet. Breakfasts are intentionally light grab-and-go (yogurt, fruit, toast, eggs). Open question for Don: happy to swap in a Costco stop if you want bulk staples (trash bags, snacks, K-cups are on sale), but it didn't pay off for groceries alone this week.</div>
 
-  <footer>Generated by weekly-grocery-planner · Approved · Week of 2026-06-22</footer>
+  <div class="feedback-bar">
+    <button class="copy-btn" id="copyFeedback" type="button">📋 Copy feedback</button>
+    <span class="feedback-status" id="feedbackStatus">No meals marked yet.</span>
+    <textarea class="feedback-output" id="feedbackOutput" readonly></textarea>
+  </div>
+
+  <footer>Generated by weekly-grocery-planner · Phase 1 review state · Week of 2026-06-22</footer>
 </div>
+
+<script>
+(function () {
+  var WEEK = "2026-06-22";
+  var KEY = "wgp-feedback-" + WEEK;
+
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
+  function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+  var state = load();
+
+  var rows = Array.prototype.slice.call(document.querySelectorAll(".meal-row[data-meal-id]"));
+
+  function applyRow(row) {
+    var id = row.getAttribute("data-meal-id");
+    var v = state[id] || {};
+    var acc = row.querySelector(".v-accept"), rej = row.querySelector(".v-reject");
+    var why = row.querySelector(".reject-why"), note = row.querySelector(".note");
+    acc.classList.toggle("on", v.verdict === "accept");
+    rej.classList.toggle("on", v.verdict === "reject");
+    row.classList.toggle("accepted", v.verdict === "accept");
+    row.classList.toggle("rejected", v.verdict === "reject");
+    why.hidden = v.verdict !== "reject";
+    if (v.why) { var r = row.querySelector('input[value="' + v.why + '"]'); if (r) r.checked = true; }
+    if (note && typeof v.note === "string") note.value = v.note;
+  }
+
+  function status() {
+    var a = 0, r = 0;
+    Object.keys(state).forEach(function (k) {
+      if (state[k].verdict === "accept") a++; else if (state[k].verdict === "reject") r++;
+    });
+    var total = rows.length;
+    document.getElementById("feedbackStatus").textContent =
+      (a + r) + " of " + total + " marked  ·  " + a + " accept, " + r + " reject";
+  }
+
+  rows.forEach(function (row) {
+    var id = row.getAttribute("data-meal-id");
+    var expand = row.querySelector(".expand-btn");
+    var detail = row.querySelector(".meal-detail");
+    expand.addEventListener("click", function () {
+      var open = detail.hidden;
+      detail.hidden = !open;
+      expand.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+
+    row.querySelector(".v-accept").addEventListener("click", function () {
+      state[id] = state[id] || {}; state[id].verdict = "accept"; delete state[id].why;
+      save(state); applyRow(row); status();
+    });
+    row.querySelector(".v-reject").addEventListener("click", function () {
+      state[id] = state[id] || {}; state[id].verdict = "reject";
+      if (!state[id].why) state[id].why = "not-today";
+      save(state); applyRow(row); status();
+    });
+    row.querySelectorAll('.reject-why input').forEach(function (radio) {
+      radio.addEventListener("change", function () {
+        state[id] = state[id] || {}; state[id].why = radio.value; save(state);
+      });
+    });
+    var note = row.querySelector(".note");
+    note.addEventListener("input", function () {
+      state[id] = state[id] || {}; state[id].note = note.value; save(state);
+    });
+
+    applyRow(row);
+  });
+  status();
+
+  function buildText() {
+    var lines = ["GROCERY FEEDBACK week=" + WEEK];
+    rows.forEach(function (row) {
+      var id = row.getAttribute("data-meal-id");
+      var name = row.getAttribute("data-meal-name") || "";
+      var v = state[id];
+      if (!v || !v.verdict) return;
+      var line = "- " + id + " | " + v.verdict;
+      if (v.verdict === "reject") line += " (" + (v.why || "not-today") + ")";
+      line += " | " + name;
+      if (v.note && v.note.trim()) line += " | note: " + v.note.trim();
+      lines.push(line);
+    });
+    if (lines.length === 1) lines.push("(no meals marked)");
+    return lines.join("\n");
+  }
+
+  document.getElementById("copyFeedback").addEventListener("click", function () {
+    var text = buildText();
+    var out = document.getElementById("feedbackOutput");
+    out.value = text; out.style.display = "block";
+    function fallback() { out.focus(); out.select(); try { document.execCommand("copy"); } catch (e) {} }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () { document.getElementById("feedbackStatus").textContent = "Copied — paste it into your Claude session."; },
+        fallback
+      );
+    } else { fallback(); document.getElementById("feedbackStatus").textContent = "Select the box above and copy, then paste into Claude."; }
+  });
+})();
+</script>
 </body>
 </html>
