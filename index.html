@@ -3,228 +3,164 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meal Plan Review — Week of 2026-06-22</title>
+  <title>This Week's Meals — 2026-06-22</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 1rem; line-height: 1.5; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f0; color: #1a1a1a; padding: 1rem; line-height: 1.6; }
     .container { max-width: 720px; margin: 0 auto; }
     h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
     .subtitle { color: #555; font-size: 0.95rem; margin-bottom: 1.5rem; }
-    .high-cost-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-weight: 600; color: #856404; }
-    .instructions-card { background: #e8f4fd; border: 1px solid #b8d8f0; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
-    .instructions-card h2 { font-size: 1rem; margin-bottom: 0.5rem; color: #0a4c7a; }
-    .instructions-card ol { padding-left: 1.25rem; }
-    .instructions-card li { margin-bottom: 0.25rem; }
-    code { background: #fff; border: 1px solid #ccc; border-radius: 3px; padding: 0.1em 0.4em; font-size: 0.9em; }
     .summary-row { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
     .summary-chip { background: #fff; border: 1px solid #ddd; border-radius: 20px; padding: 0.4rem 0.85rem; font-size: 0.9rem; }
     .summary-chip strong { color: #333; }
-    .plan-section h2 { font-size: 1.15rem; margin-bottom: 0.75rem; border-bottom: 2px solid #ddd; padding-bottom: 0.35rem; }
+    .section-title { font-size: 1.15rem; font-weight: 700; margin: 1.5rem 0 0.75rem; border-bottom: 2px solid #ddd; padding-bottom: 0.35rem; }
     .day-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.75rem; }
-    .day-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: #222; }
-    .meal-row { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.25rem 0; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; }
-    .meal-row:last-child { border-bottom: none; }
-    .meal-type { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: #777; min-width: 70px; }
-    .meal-name { flex: 1; font-size: 0.95rem; }
-    .meal-desc { flex-basis: 100%; font-size: 0.85rem; color: #555; margin: 0.1rem 0 0.15rem 1.9rem; line-height: 1.35; }
-    .cost { font-size: 0.85rem; color: #228B22; font-weight: 600; white-space: nowrap; }
-    .deal-tag { font-size: 0.78rem; background: #d4edda; color: #155724; border-radius: 3px; padding: 0.1em 0.4em; }
-    .toddler-tag { font-size: 0.78rem; }
-    /* interactive review */
-    .meal-row { flex-direction: column; align-items: stretch; gap: 0; }
-    .meal-line { display: flex; gap: 0.5rem; align-items: baseline; flex-wrap: wrap; }
-    .expand-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; color: #888; padding: 0 0.25rem 0 0; line-height: 1; align-self: center; transition: transform .15s; }
-    .expand-btn[aria-expanded="true"] { transform: rotate(90deg); color: #333; }
-    .meal-detail { margin: 0.5rem 0 0.25rem 1.9rem; padding: 0.5rem 0.75rem; background: #fafafa; border: 1px solid #eee; border-radius: 6px; }
-    .detail-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: #999; font-weight: 700; margin: 0.35rem 0 0.15rem; }
-    .ingredients-list { list-style: disc; padding-left: 1.4rem; font-size: 0.88rem; color: #444; }
-    .steps-list { list-style: decimal; padding-left: 1.4rem; font-size: 0.88rem; color: #444; }
-    .no-detail { font-size: 0.85rem; color: #999; font-style: italic; }
-    .verdict-bar { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; margin: 0.5rem 0 0.25rem 1.9rem; }
-    .verdict-bar button { border: 1px solid #ccc; background: #fff; border-radius: 6px; padding: 0.3rem 0.7rem; font-size: 0.85rem; cursor: pointer; }
-    .verdict-bar .v-accept.on { background: #d4edda; border-color: #4caf50; color: #1b5e20; font-weight: 600; }
-    .verdict-bar .v-reject.on { background: #fdecea; border-color: #e57373; color: #b71c1c; font-weight: 600; }
-    .reject-why { font-size: 0.82rem; color: #555; display: inline-flex; gap: 0.6rem; }
-    .reject-why label { cursor: pointer; }
-    .note { flex: 1; min-width: 120px; border: 1px solid #ddd; border-radius: 6px; padding: 0.3rem 0.5rem; font-size: 0.85rem; }
-    .meal-row.accepted { background: #f5fbf6; }
-    .meal-row.rejected { background: #fdf6f5; }
-    /* feedback action bar */
-    .feedback-bar { position: sticky; bottom: 0; background: #fff; border-top: 2px solid #ddd; padding: 0.75rem 0; margin-top: 1.5rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
-    .copy-btn { background: #0a4c7a; color: #fff; border: none; border-radius: 6px; padding: 0.55rem 1.1rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
-    .copy-btn:active { background: #073a5e; }
-    .feedback-status { font-size: 0.85rem; color: #555; }
-    .feedback-output { width: 100%; margin-top: 0.5rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.8rem; border: 1px solid #ccc; border-radius: 6px; padding: 0.5rem; min-height: 4rem; display: none; }
-    .deals-section, .notes-section { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.85rem 1rem; margin-top: 1rem; }
-    .deals-section h2, .notes-section h2 { font-size: 1rem; margin-bottom: 0.5rem; }
-    .deals-section ul { padding-left: 1.25rem; font-size: 0.9rem; }
-    .deals-section li { margin-bottom: 0.2rem; }
-    .weekly-total { font-size: 1.05rem; font-weight: 700; margin-top: 1rem; text-align: right; }
+    .day-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: #222; }
+    .meal-block { margin-bottom: 0.85rem; padding-bottom: 0.85rem; border-bottom: 1px solid #f0f0f0; }
+    .meal-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .meal-header { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+    .meal-type { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #777; min-width: 70px; }
+    .meal-name { font-size: 1rem; font-weight: 600; }
+    .meal-desc { font-size: 0.88rem; color: #555; margin: 0 0 0.4rem 0; line-height: 1.4; font-style: italic; }
+    .toddler-tag { font-size: 0.78rem; color: #e67e22; }
+    .ingredients-list { list-style: disc; padding-left: 1.5rem; font-size: 0.9rem; color: #444; }
+    .ingredients-list li { margin-bottom: 0.1rem; }
+    .steps-list { list-style: decimal; padding-left: 1.5rem; font-size: 0.9rem; color: #444; margin-top: 0.4rem; }
+    .steps-list li { margin-bottom: 0.1rem; }
+    .grocery-section { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.25rem; margin-top: 0.75rem; }
+    .grocery-section h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .grocery-category h3 { font-size: 0.9rem; text-transform: uppercase; color: #555; font-weight: 700; margin: 0.75rem 0 0.35rem; letter-spacing: 0.04em; }
+    .grocery-category ul { list-style: disc; padding-left: 1.5rem; font-size: 0.92rem; }
+    .grocery-category li { margin-bottom: 0.15rem; }
+    .instacart-link { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0.6rem 1rem; margin-bottom: 0.75rem; }
+    .instacart-link a { color: #2e7d32; font-weight: 600; text-decoration: none; }
+    .instacart-link a:hover { text-decoration: underline; }
+    .notes-box { background: #fffbf0; border: 1px solid #ffe082; border-radius: 6px; padding: 0.6rem 1rem; margin-top: 1rem; font-size: 0.9rem; color: #555; }
     footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ddd; font-size: 0.82rem; color: #777; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>Meal Plan Review</h1>
-  <p class="subtitle">Week of 2026-06-22 &nbsp;·&nbsp; Phase 1: Pending Approval</p>
-
-  
-
-  <div class="instructions-card">
-    <h2>How to review from your phone</h2>
-    <ol>
-      <li>Tap <strong>▸</strong> on any dinner to see its full recipe (ingredients + steps).</li>
-      <li>Mark each meal <strong>✓ Accept</strong> or <strong>✕ Reject</strong>. On reject, pick <em>dislike</em> (never suggest again) or <em>not today</em> (just not this week). Add a note if you want.</li>
-      <li>Tap <strong>Copy feedback</strong> at the bottom, then paste it back into your Claude session. The agent re-plans the rejects, keeps &amp; saves the accepts, and remembers your notes.</li>
-    </ol>
-  </div>
+  <h1>This Week's Meals</h1>
+  <p class="subtitle">Week of 2026-06-22 &nbsp;·&nbsp; Approved</p>
 
   <div class="summary-row">
-    <div class="summary-chip"><strong>Est. weekly cost:</strong> $85.00</div>
-    <div class="summary-chip"><strong>Recommended store:</strong> Aldi</div>
+    <div class="summary-chip"><strong>Weekly cost est.:</strong> $85.00</div>
+    <div class="summary-chip"><strong>Store:</strong> Aldi</div>
+    <div class="summary-chip"><strong>Grocery mode:</strong> list</div>
   </div>
 
-  <div class="plan-section">
-    <h2>Proposed Plan</h2>
-    <div class="day-card"><h3>Monday</h3>
-<div class="meal-row" data-meal-id="Monday-dinner" data-meal-name="Chicken Fajitas"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Chicken Fajitas<span class="toddler-tag"> 🧒</span></span><span class="cost">$13.00</span><span class="deal-tag">Fresh Family Pack Chicken Breasts</span><div class="meal-desc">Sizzling sliced chicken and sweet peppers in warm tortillas, with heat added per plate.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 lb boneless chicken breast</li><li>3 pieces bell peppers</li><li>1 large yellow onion</li><li>10 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>0.5 cup sour cream</li><li>1 packet fajita seasoning</li><li>2 tbsp olive oil</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Monday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Monday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+  <div class="section-title">Meal Plan</div>
+  <div class="day-card"><h3>Monday</h3>
+<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Chicken Fajitas<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Sizzling sliced chicken and sweet peppers in warm tortillas, with heat added per plate.</div>
+<ul class="ingredients-list"><li>2 lb boneless chicken breast</li><li>3 pieces bell peppers</li><li>1 large yellow onion</li><li>10 pieces flour tortillas</li><li>1 cup shredded cheddar</li><li>0.5 cup sour cream</li><li>1 packet fajita seasoning</li><li>2 tbsp olive oil</li></ul>
+</div>
 </div>
 <div class="day-card"><h3>Tuesday</h3>
-<div class="meal-row" data-meal-id="Tuesday-dinner" data-meal-name="Beef Taco Rice Bowls"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Beef Taco Rice Bowls<span class="toddler-tag"> 🧒</span></span><span class="cost">$11.00</span><span class="deal-tag">Fresh Ground Beef Chub</span><div class="meal-desc">Seasoned ground beef over rice with beans, corn, cheese, and salsa for easy mixing.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1.5 lb ground beef</li><li>2 cups white rice</li><li>1 15-oz can black beans</li><li>1 15-oz can corn</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>1 packet taco seasoning</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Tuesday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Tuesday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Beef Taco Rice Bowls<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Seasoned ground beef over rice with beans, corn, cheese, and salsa for easy mixing.</div>
+<ul class="ingredients-list"><li>1.5 lb ground beef</li><li>2 cups white rice</li><li>1 15-oz can black beans</li><li>1 15-oz can corn</li><li>1 cup shredded cheddar</li><li>1 cup salsa</li><li>1 packet taco seasoning</li></ul>
+</div>
 </div>
 <div class="day-card"><h3>Wednesday</h3>
-<div class="meal-row" data-meal-id="Wednesday-dinner" data-meal-name="Instant Pot Creamy Chicken &amp; Rice"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Instant Pot Creamy Chicken &amp; Rice<span class="toddler-tag"> 🧒</span></span><span class="cost">$9.00</span><span class="deal-tag">Kirkwood Fresh Family Pack Chicken Thighs</span><div class="meal-desc">Set-and-forget tender chicken thighs with rice and veggies in a cozy creamy sauce.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>2 lb bone-in chicken thighs</li><li>1.5 cups long-grain rice</li><li>2 cups broccoli florets</li><li>2 pieces carrots</li><li>3 cups chicken broth</li><li>0.5 cup heavy cream</li><li>1 tsp garlic powder</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Wednesday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Wednesday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Instant Pot Creamy Chicken & Rice<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Set-and-forget tender chicken thighs with rice and veggies in a cozy creamy sauce.</div>
+<ul class="ingredients-list"><li>2 lb bone-in chicken thighs</li><li>1.5 cups long-grain rice</li><li>2 cups broccoli florets</li><li>2 pieces carrots</li><li>3 cups chicken broth</li><li>0.5 cup heavy cream</li><li>1 tsp garlic powder</li></ul>
+</div>
 </div>
 <div class="day-card"><h3>Thursday</h3>
-<div class="meal-row" data-meal-id="Thursday-dinner" data-meal-name="Garlic Butter Shrimp Pasta"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Garlic Butter Shrimp Pasta<span class="toddler-tag"> 🧒</span></span><span class="cost">$14.00</span><span class="deal-tag">Fresh Jumbo Raw Peeled &amp; Deveined Tail-Off Shrimp</span><div class="meal-desc">Quick garlicky shrimp tossed with buttery pasta and parmesan — done in 20 minutes.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1 lb raw peeled shrimp</li><li>1 lb spaghetti</li><li>4 tbsp butter</li><li>4 cloves garlic</li><li>1 cup frozen peas</li><li>0.5 cup parmesan cheese</li><li>1 piece lemon</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Thursday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Thursday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Garlic Butter Shrimp Pasta<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Quick garlicky shrimp tossed with buttery pasta and parmesan — done in 20 minutes.</div>
+<ul class="ingredients-list"><li>1 lb raw peeled shrimp</li><li>1 lb spaghetti</li><li>4 tbsp butter</li><li>4 cloves garlic</li><li>1 cup frozen peas</li><li>0.5 cup parmesan cheese</li><li>1 piece lemon</li></ul>
+</div>
 </div>
 <div class="day-card"><h3>Friday</h3>
-<div class="meal-row" data-meal-id="Friday-dinner" data-meal-name="Margherita Flatbread Pizzas"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Margherita Flatbread Pizzas<span class="toddler-tag"> 🧒</span></span><span class="cost">$11.00</span><span class="deal-tag">Snacking Tomatoes On the Vine</span><div class="meal-desc">Crisp flatbreads with marinara, fresh mozzarella, and basil — fun for little hands to top.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>4 pieces flatbread or naan</li><li>1 cup marinara sauce</li><li>12 oz fresh mozzarella</li><li>1 bunch fresh basil</li><li>1 pint snacking tomatoes</li><li>2 tbsp olive oil</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Friday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Friday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Margherita Flatbread Pizzas<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Crisp flatbreads with marinara, fresh mozzarella, and basil — fun for little hands to top.</div>
+<ul class="ingredients-list"><li>4 pieces flatbread or naan</li><li>1 cup marinara sauce</li><li>12 oz fresh mozzarella</li><li>1 bunch fresh basil</li><li>1 pint snacking tomatoes</li><li>2 tbsp olive oil</li></ul>
+</div>
 </div>
 <div class="day-card"><h3>Saturday</h3>
-<div class="meal-row" data-meal-id="Saturday-dinner" data-meal-name="Grilled Sirloin with Potatoes &amp; Corn"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Grilled Sirloin with Potatoes &amp; Corn<span class="toddler-tag"> 🧒</span></span><span class="cost">$16.00</span><span class="deal-tag">Fresh Black Angus USDA Choice Petite Sirloin Steaks</span><div class="meal-desc">Juicy grilled sirloin with roasted baby potatoes and sweet summer corn on the cob.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1.5 lb petite sirloin steaks</li><li>1.5 lb baby potatoes</li><li>4 ears corn on the cob</li><li>2 tbsp butter</li><li>2 tbsp olive oil</li><li>1 tbsp steak seasoning</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Saturday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Saturday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Grilled Sirloin with Potatoes & Corn<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Juicy grilled sirloin with roasted baby potatoes and sweet summer corn on the cob.</div>
+<ul class="ingredients-list"><li>1.5 lb petite sirloin steaks</li><li>1.5 lb baby potatoes</li><li>4 ears corn on the cob</li><li>2 tbsp butter</li><li>2 tbsp olive oil</li><li>1 tbsp steak seasoning</li></ul>
+</div>
 </div>
 <div class="day-card"><h3>Sunday</h3>
-<div class="meal-row" data-meal-id="Sunday-dinner" data-meal-name="Slow Cooker Chicken Chili"><div class="meal-line"><button class="expand-btn" type="button" aria-expanded="false" title="Show recipe">▸</button><span class="meal-type">Dinner</span><span class="meal-name">Slow Cooker Chicken Chili<span class="toddler-tag"> 🧒</span></span><span class="cost">$11.00</span><span class="deal-tag">Fresh Family Pack Chicken Breasts</span><div class="meal-desc">Hearty white chicken chili simmered all day; keep it mild and add heat per bowl.</div></div><div class="meal-detail" hidden><div class="detail-label">Ingredients</div><ul class="ingredients-list"><li>1.5 lb boneless chicken breast</li><li>2 15-oz cans cannellini or great northern beans</li><li>1 15-oz can corn</li><li>1 15-oz can diced tomatoes</li><li>3 cups chicken broth</li><li>1 tsp cumin</li><li>1 tsp chili powder</li><li>1 cup shredded cheddar</li></ul></div><div class="verdict-bar"><button class="v-accept" type="button" data-v="accept">✓ Accept</button><button class="v-reject" type="button" data-v="reject">✕ Reject</button><span class="reject-why" hidden><label><input type="radio" name="why-Sunday-dinner" value="dislike"> dislike</label><label><input type="radio" name="why-Sunday-dinner" value="not-today" checked> not today</label></span><input class="note" type="text" placeholder="note (optional)" maxlength="200"></div></div>
+<div class="meal-block"><div class="meal-header"><span class="meal-type">Dinner</span><span class="meal-name">Slow Cooker Chicken Chili<span class="toddler-tag"> 🧒</span></span></div><div class="meal-desc">Hearty white chicken chili simmered all day; keep it mild and add heat per bowl.</div>
+<ul class="ingredients-list"><li>1.5 lb boneless chicken breast</li><li>2 15-oz cans cannellini or great northern beans</li><li>1 15-oz can corn</li><li>1 15-oz can diced tomatoes</li><li>3 cups chicken broth</li><li>1 tsp cumin</li><li>1 tsp chili powder</li><li>1 cup shredded cheddar</li></ul>
 </div>
-  </div>
+</div>
 
-  <p class="weekly-total">Estimated weekly total: $85.00</p>
-
-  <div class="deals-section">
-    <h2>Deals Used This Week</h2>
-    <ul style="padding-left:1.25rem;font-size:.9rem"><li><strong>Fresh Family Pack Chicken Breasts</strong> — $2.19 at ALDI</li><li><strong>Fresh Ground Beef Chub</strong> — $2.99 at ALDI</li><li><strong>Kirkwood Fresh Family Pack Chicken Thighs</strong> — $1.55 at ALDI</li><li><strong>Fresh Jumbo Raw Peeled & Deveined Tail-Off Shrimp</strong> — $9.49 at ALDI</li><li><strong>Snacking Tomatoes On the Vine</strong> — $2.29 at ALDI</li><li><strong>Fresh Black Angus USDA Choice Petite Sirloin Steaks</strong> — $8.99 at ALDI</li></ul>
+  <div class="section-title">Grocery List</div>
+  <div class="grocery-section">
+    <div class="grocery-category"><h3>Produce</h3><ul>
+<li>1.5 lb baby potatoes</li>
+<li>1 bunch bananas</li>
+<li>3 pieces bell peppers</li>
+<li>1 container black pepper</li>
+<li>2 cups broccoli florets</li>
+<li>2 pieces carrots</li>
+<li>1 15-oz can diced tomatoes</li>
+<li>4 cloves garlic</li>
+<li>1 tsp garlic powder</li>
+<li>1 container garlic powder</li>
+<li>1 piece lemon</li>
+<li>1 pint snacking tomatoes</li>
+<li>1 large yellow onion</li>
+</ul></div>
+<div class="grocery-category"><h3>Meat</h3><ul>
+<li>2 lb bone-in chicken thighs</li>
+<li>3.5 lb boneless chicken breast</li>
+<li>6 cups chicken broth</li>
+<li>1.5 lb ground beef</li>
+<li>1.5 lb petite sirloin steaks</li>
+<li>1 lb raw peeled shrimp</li>
+<li>1 tbsp steak seasoning</li>
+</ul></div>
+<div class="grocery-category"><h3>Dairy</h3><ul>
+<li>6 tbsp butter</li>
+<li>1 lb butter</li>
+<li>1 dozen eggs</li>
+<li>12 oz fresh mozzarella</li>
+<li>0.5 cup heavy cream</li>
+<li>1 gallon milk</li>
+<li>0.5 cup parmesan cheese</li>
+<li>3 cup shredded cheddar</li>
+<li>0.5 cup sour cream</li>
+</ul></div>
+<div class="grocery-category"><h3>Bakery</h3><ul>
+<li>1 loaf bread</li>
+<li>4 pieces flatbread or naan</li>
+<li>10 pieces flour tortillas</li>
+</ul></div>
+<div class="grocery-category"><h3>Frozen</h3><ul>
+<li>1 cup frozen peas</li>
+</ul></div>
+<div class="grocery-category"><h3>Pantry</h3><ul>
+<li>1 15-oz can black beans</li>
+<li>2 15-oz cans cannellini or great northern beans</li>
+<li>1 tsp chili powder</li>
+<li>1 tsp cumin</li>
+<li>1 packet fajita seasoning</li>
+<li>1 bunch fresh basil</li>
+<li>1.5 cups long-grain rice</li>
+<li>1 cup marinara sauce</li>
+<li>6 tbsp olive oil</li>
+<li>1 bottle olive oil</li>
+<li>1 cup salsa</li>
+<li>1 container salt</li>
+<li>1 packet taco seasoning</li>
+<li>2 cups white rice</li>
+</ul></div>
+<div class="grocery-category"><h3>Beverages</h3><ul>
+<li>1 bag coffee</li>
+</ul></div>
+<div class="grocery-category"><h3>Other</h3><ul>
+<li>2 15-oz can corn</li>
+<li>4 ears corn on the cob</li>
+<li>1 lb spaghetti</li>
+</ul></div>
   </div>
 
   <div class="notes-box"><strong>Notes:</strong> Single-store week at Aldi (~5 min, no second stop needed). Aldi's protein sale this week is unusually strong and carries almost the whole plan: chicken breast at $2.19/lb (Mon fajitas + Sun chili), chicken thighs at $1.55/lb (Wed Instant Pot), ground beef chub at $2.99/lb (Tue bowls), jumbo shrimp at $9.49 (Thu pasta), and petite sirloin at $8.99/lb (Sat grill). That's enough savings on its own that a Costco run isn't worth it this week — happy to discuss if you'd rather bulk-buy anything. All proteins are non-pork per the household preference. Every dinner is cooked to ~4 servings for next-day lunches. Weeknights are all fast/30-min or set-and-forget (Wed Instant Pot, Sun slow cooker); the more involved grill night is saved for Saturday. Heat is added per-plate on fajitas (Mon) and chicken chili (Sun) so the toddler always gets a mild portion. Nothing repeats last week's plan.</div>
 
-  <div class="feedback-bar">
-    <button class="copy-btn" id="copyFeedback" type="button">📋 Copy feedback</button>
-    <span class="feedback-status" id="feedbackStatus">No meals marked yet.</span>
-    <textarea class="feedback-output" id="feedbackOutput" readonly></textarea>
-  </div>
-
-  <footer>Generated by weekly-grocery-planner · Phase 1 review state · Week of 2026-06-22</footer>
+  <footer>Generated by weekly-grocery-planner · Approved · Week of 2026-06-22</footer>
 </div>
-
-<script>
-(function () {
-  var WEEK = "2026-06-22";
-  var KEY = "wgp-feedback-" + WEEK;
-
-  function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
-  function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
-  var state = load();
-
-  var rows = Array.prototype.slice.call(document.querySelectorAll(".meal-row[data-meal-id]"));
-
-  function applyRow(row) {
-    var id = row.getAttribute("data-meal-id");
-    var v = state[id] || {};
-    var acc = row.querySelector(".v-accept"), rej = row.querySelector(".v-reject");
-    var why = row.querySelector(".reject-why"), note = row.querySelector(".note");
-    acc.classList.toggle("on", v.verdict === "accept");
-    rej.classList.toggle("on", v.verdict === "reject");
-    row.classList.toggle("accepted", v.verdict === "accept");
-    row.classList.toggle("rejected", v.verdict === "reject");
-    why.hidden = v.verdict !== "reject";
-    if (v.why) { var r = row.querySelector('input[value="' + v.why + '"]'); if (r) r.checked = true; }
-    if (note && typeof v.note === "string") note.value = v.note;
-  }
-
-  function status() {
-    var a = 0, r = 0;
-    Object.keys(state).forEach(function (k) {
-      if (state[k].verdict === "accept") a++; else if (state[k].verdict === "reject") r++;
-    });
-    var total = rows.length;
-    document.getElementById("feedbackStatus").textContent =
-      (a + r) + " of " + total + " marked  ·  " + a + " accept, " + r + " reject";
-  }
-
-  rows.forEach(function (row) {
-    var id = row.getAttribute("data-meal-id");
-    var expand = row.querySelector(".expand-btn");
-    var detail = row.querySelector(".meal-detail");
-    expand.addEventListener("click", function () {
-      var open = detail.hidden;
-      detail.hidden = !open;
-      expand.setAttribute("aria-expanded", open ? "true" : "false");
-    });
-
-    row.querySelector(".v-accept").addEventListener("click", function () {
-      state[id] = state[id] || {}; state[id].verdict = "accept"; delete state[id].why;
-      save(state); applyRow(row); status();
-    });
-    row.querySelector(".v-reject").addEventListener("click", function () {
-      state[id] = state[id] || {}; state[id].verdict = "reject";
-      if (!state[id].why) state[id].why = "not-today";
-      save(state); applyRow(row); status();
-    });
-    row.querySelectorAll('.reject-why input').forEach(function (radio) {
-      radio.addEventListener("change", function () {
-        state[id] = state[id] || {}; state[id].why = radio.value; save(state);
-      });
-    });
-    var note = row.querySelector(".note");
-    note.addEventListener("input", function () {
-      state[id] = state[id] || {}; state[id].note = note.value; save(state);
-    });
-
-    applyRow(row);
-  });
-  status();
-
-  function buildText() {
-    var lines = ["GROCERY FEEDBACK week=" + WEEK];
-    rows.forEach(function (row) {
-      var id = row.getAttribute("data-meal-id");
-      var name = row.getAttribute("data-meal-name") || "";
-      var v = state[id];
-      if (!v || !v.verdict) return;
-      var line = "- " + id + " | " + v.verdict;
-      if (v.verdict === "reject") line += " (" + (v.why || "not-today") + ")";
-      line += " | " + name;
-      if (v.note && v.note.trim()) line += " | note: " + v.note.trim();
-      lines.push(line);
-    });
-    if (lines.length === 1) lines.push("(no meals marked)");
-    return lines.join("\n");
-  }
-
-  document.getElementById("copyFeedback").addEventListener("click", function () {
-    var text = buildText();
-    var out = document.getElementById("feedbackOutput");
-    out.value = text; out.style.display = "block";
-    function fallback() { out.focus(); out.select(); try { document.execCommand("copy"); } catch (e) {} }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(
-        function () { document.getElementById("feedbackStatus").textContent = "Copied — paste it into your Claude session."; },
-        fallback
-      );
-    } else { fallback(); document.getElementById("feedbackStatus").textContent = "Select the box above and copy, then paste into Claude."; }
-  });
-})();
-</script>
 </body>
 </html>
